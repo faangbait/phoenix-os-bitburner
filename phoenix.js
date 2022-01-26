@@ -11,7 +11,7 @@
  import { loop_time } from "./var.constants";
  import { fmt_cash, fmt_num, fmt_bits, hashpower, ram, hashrate, purchased, owned } from "./lib.utils.so";
 
- var debug_mode;
+ const singularity = true; // source file 4
 
  export async function main(ns){
      globalThis.ns = ns;
@@ -23,6 +23,11 @@
      servers.map(server => server.pids).flat()
         .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js")
         .forEach(process => ns.kill(process.pid));
+    
+    // start additional scripts
+    if (singularity) {
+        ns.exec("etc.singularity.js", "home");
+    }
     
      while (true) {
          await heartbeat();
@@ -96,7 +101,9 @@ function determineResourceAllocation(servers, player) {
                 cls: gs.msReadyforAug,
                 compareFns: [
                     (ns.readPort(1) == "READY FOR AUG"),
-                    (player.money > Math.pow(10,12))
+                    (player.money > Math.pow(10,12)),
+                    (servers.filter(s => s.id === String.fromCharCode(119, 48, 114, 49, 100, 95, 100, 52, 51, 109, 48, 110)).length > 0),
+        
                 ]
             }
         ];
