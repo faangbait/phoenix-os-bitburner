@@ -371,22 +371,19 @@ export default class Default {
      * @memberof Default
      */
     __iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids) {
-        // for (let t of targets) {
-        //     if (this.complete_when(t)) {
-        //         t.status = semaphores.COMPLETED;
-        //     }
-        // }
-        
-        // let completed = servers.filter(server => server.status === semaphores.COMPLETED).map(server => server.hostname);
-        // servers.map(server => server.pids).flat().filter(process => completed.includes(process.target) || completed.includes(process.args[0])).forEach(process => globalThis.ns.kill(process.pid));
+        for (let t of targets) {
+            if (this.complete_when(t)) {
+                t.status = semaphores.COMPLETED;
+            }
+        }
 
-        // servers.map(server => server.pids)
-        // .filter(server => completed.includes(server.hostname))
-        // .forEach(process => globalThis.ns.tprint(process));
-        
-        servers.filter(s => s.threadCount(this.memory_req) > 0).forEach(s => s.status = semaphores.AVAILABLE);
-        // bootstrapped.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE); // catch failed deployments
+        let completed = servers.filter(server => server.status === semaphores.COMPLETED).map(server => server.hostname);
+        servers.map(server => server.pids).flat().filter(process => completed.includes(process.target) || completed.includes(process.args[0])).forEach(process => globalThis.ns.kill(process.pid));
 
+
+        servers.filter(s => s.threadCount(this.memory_req) > 0).filter(s => ![semaphores.ILLEGAL, semaphores.DISQUALIFIED].includes(s.status)).forEach(s => s.status = semaphores.AVAILABLE);
+        bootstrapped.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE); // catch failed deployments
+       
         return this.iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids);
     }
 }
