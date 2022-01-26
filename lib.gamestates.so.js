@@ -71,7 +71,7 @@ export class DefaultGameStage extends GameState {
      * @memberof DefaultGameStage
      */
     static select_algorithm(ns, player, servers) {
-        const algo = new Balanced(ns, player, servers);
+        const algo = new Default(ns, player, servers);
         return algo;
     }
     

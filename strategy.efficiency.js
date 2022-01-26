@@ -65,7 +65,7 @@ export default class Balanced extends Default {
     //     ];
     // }
     sort_targets(targets) {
-        return targets.sort ((a,b) => a.security.level- b.security_level)
+        return targets.sort ((a,b) => a.security.level- b.security_level);
     }
 
     /**
@@ -100,7 +100,7 @@ export default class Balanced extends Default {
                     bundles.push(JSON.stringify({
                         file: path,
                         attacker: a.id,
-                        threads: Math.floor(a.threadCount(ram, true) * ratio),
+                        threads: Math.floor(a.threadCount( this.memory_req / ratio )),
                         args: [targets[0].id]
                     }));
                 }

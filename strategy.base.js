@@ -24,16 +24,15 @@ export const semaphores = strategy_semaphores;
  */
 export default class Default {
     constructor(ns, player, servers) {
-        this.stagger = 4;
         this.files = [{
             path: "bin.universal.loop.js",
             ram: 2.4
         }];
         
         // by default, we assume files here will all be executed on the target at equal thread counts. you can override this.memory_req.
-
-        this.memory_req = this.files.map(f => f.ram).reduce((a,b) => a+b, 0);
-        this.optimize_thread_splitting = true; // if true, very powerful servers (hundreds of thousands of threads) will attack multiple targets no matter what the strategy is
+        this.memory_req = this.files.reduce((a,b) => a+b.ram, 0);
+        this.stagger = 1;
+        // this.optimize_thread_splitting = true; // if true, very powerful servers (hundreds of thousands of threads) will attack multiple targets no matter what the strategy is
     }
 
     /**
@@ -46,7 +45,7 @@ export default class Default {
      * @override
      */
     disqualify_attacker(s) {
-        return (false);
+        return false;
     }
 
     /**
@@ -63,6 +62,8 @@ export default class Default {
 
         if (globalThis.ns.exec('sbin.scp.js', 'home', 1, ...args)) {
             a.status = semaphores.BOOTSTRAPPED;
+        } else {
+            globalThis.ns.tprint("Error bootstrapping ", a.id);
         }
 
         return a;
@@ -113,16 +114,6 @@ export default class Default {
         return targets.sort((a, b) => a.level - b.level);
     }
 
-    // no_targets(a) {
-    //     return [
-    //         JSON.stringify({
-    //             file: "bin.universal.loop.js",
-    //             attacker: a.id,
-    //             threads: a.threadCount(2.4, true),
-    //             args: ["foodnstuff"]
-    //         })
-    //     ];
-    // }
     /**
      * Create a list of attack_package objects that instruct the deployer
      *
@@ -133,40 +124,25 @@ export default class Default {
     */
     prepare_package(a, targets) {
         var bundles = [];
-        let total_ram = this.files.reduce((a,b) => a + b.ram, 0);
-        let threads_available = Math.floor(a.threadCount(total_ram) || 0);
-        let threads_required = 0;
-        let i = 0;
-        while (threads_available >= 1 && i < targets.length) {
-            for (let {
-                path,
-                ram
-            } of this.files) {
-            let ratio = ram / total_ram;
-            threads_available *= ratio;
-        
-            threads_required = Math.ceil(Math.max(targets[i].hackMaxThreads, targets[i].growMaxThreads, targets[i].weakMaxThreads, 1));
-            if (!threads_required) {
-                threads_required = threads_available;
-            }
+        var ram_used_this_bundle = 0;
+
+        targets.forEach(target => {
+            ram_used_this_bundle += Math.floor(a.threadCount(this.memory_req)) * this.memory_req;
+
+            if (a.ram.free >= ram_used_this_bundle )
+            for (let { path, ram } of this.files) {
                 bundles.push(JSON.stringify({
                     file: path,
                     attacker: a.id,
-                    threads: Math.floor(Math.min(threads_available, threads_required)),
-                    args: [targets[i].id]
+                    threads: Math.floor(a.threadCount(this.memory_req / ( ram / this.memory_req))),
+                    args: [target.id]
                 }));
-            threads_available -= threads_required;
-            }
-            i++;
-            
-        }
-        // if (bundles.length > 0) {
-        //     return bundles;
-        // } else {
-        //     return no_targets(a);
-        // }
+
+               }
+        });
         return bundles;
     }
+
 
     /**
      * Executes the bundle and returns its pid
@@ -228,7 +204,7 @@ export default class Default {
         }
 
 
-        servers.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE);
+        // servers.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE);
         return {servers, attackers, bootstrapped, targets, filtered, executions, pids};
     }
     
@@ -249,19 +225,17 @@ export default class Default {
             if ((s.status != semaphores.IN_PROGRESS && s.threadCount(this.memory_req) == 0) || this.disqualify_attacker(s)) {
                 s.status = semaphores.DISQUALIFIED;
             }
-            if (!(s.admin && s.ram.max > 0)) {
+            if (!s.admin || !s.ram.max) {
                 s.status = semaphores.ILLEGAL;
             }
-
             if (![
                 semaphores.DISQUALIFIED,
                 semaphores.ILLEGAL,
                 semaphores.RESERVED
-            ].includes(s)) {
+            ].includes(s.status)) {
                 qualified_array.push(s);
             }
         }
-
         return qualified_array;
     }
 
@@ -411,7 +385,7 @@ export default class Default {
         // .forEach(process => globalThis.ns.tprint(process));
         
         servers.filter(s => s.threadCount(this.memory_req) > 0).forEach(s => s.status = semaphores.AVAILABLE);
-        bootstrapped.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE); // catch failed deployments
+        // bootstrapped.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE); // catch failed deployments
 
         return this.iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids);
     }
