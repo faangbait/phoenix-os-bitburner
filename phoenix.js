@@ -11,7 +11,7 @@
  import { loop_time } from "./var.constants";
  import { fmt_cash, fmt_num, fmt_bits, hashpower, ram, hashrate, purchased, owned } from "./lib.utils.so";
 
- const singularity = true; // source file 4
+ const singularity = true; // source file 4, not in default, see "sf4" branch on github.
 
  export async function main(ns){
      globalThis.ns = ns;
@@ -25,9 +25,9 @@
         .forEach(process => ns.kill(process.pid));
     
     // start additional scripts
-    if (singularity) {
-        ns.exec("etc.singularity.js", "home");
-    }
+//     if (singularity) {
+//         ns.exec("etc.singularity.js", "home");
+//     }
     
      while (true) {
          await heartbeat();
