@@ -32,7 +32,6 @@
      while (true) {
          await heartbeat();
          ({servers, player} = updateData(ns, servers, player));
-         if (ns.read("var.debug.txt")) {debug_mode = true;} else {debug_mode = false;};
  
 
         var gameStage = determineGameStage(servers, player);
