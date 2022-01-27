@@ -21,7 +21,7 @@
 
      // kill all non-phoenix files on boot
      servers.map(server => server.pids).flat()
-        .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js")
+        .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js" && process.filename != "etc.singularity.js")
         .forEach(process => ns.kill(process.pid));
     
     // start additional scripts
@@ -152,7 +152,7 @@ function determineGameStage(servers, player) {
             cls: gs.gsMidGame,
             compareFns: [
                 (player.faction.membership.includes("BitRunners")),
-                (servers.map(s => s.ram.max).reduce((a,b) => a+b,0) > 10e7),
+                (servers.map(s => s.ram.max).reduce((a,b) => a+b,0) > 10e5),
             ]
         },
         {

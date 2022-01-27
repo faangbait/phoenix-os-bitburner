@@ -49,7 +49,7 @@ export function firstLoad(ns) {
     }
 
     for (let server of servers) {
-        if (!server.admin && server.level <= player.level && server.ports.required <= player.ports) {
+        if (!server.admin && server.ports.required <= player.ports) {
             ns.tprint("Attempting sudo on ", server.id);
             server.sudo();
         }

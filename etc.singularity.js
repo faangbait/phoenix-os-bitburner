@@ -174,6 +174,65 @@ function minSumPath(arr) {
 	return memo[0];
 }
 
+
+function range(size, startAt = 0) {
+    return [...Array(size).keys()].map(i => i + startAt);
+}
+
+const array_jumping_generate_graph = (solution_array) => {
+    let graph = new Map();
+    for (let i = 0; i < solution_array.length; i++) {
+        graph.set(i, range(solution_array[i], i+1)
+        );
+    }
+    return graph;
+};
+
+const array_jumping_traverse_graph = (graph, source) => {
+    const stack = [ source ];
+    const result = [];
+    const visited = {};
+    visited [ source ] = true;
+    let current;
+
+    while (stack.length > 0) {
+        current = stack.pop();
+        // console.log(current);
+        if (current >= graph.size) { return true; }
+        result.push(current);
+        try {
+            graph.get(current).forEach(neighbor => {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    stack.push(neighbor);
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return true;
+        }
+    }
+    return false;
+};
+    
+
+const array_jumping_can_win = (solution_array) => {
+    let graph = array_jumping_generate_graph(solution_array);
+    return array_jumping_traverse_graph(graph, 0);
+};
+
+const find_largest_prime_factor = (target) => {
+    var x = 2;
+    while (x <= target) {
+        if (target % x == 0) {
+            target /= x;
+        } else {
+            x++;
+        }
+    }
+    return x;
+};
+
 export async function main(ns) {
 	/*****************
 	solve coding contracts
@@ -189,27 +248,35 @@ export async function main(ns) {
 				switch (ns.codingcontract.getContractType(contractName, server)) {
 					case "Spiralize Matrix":
 						result = spiralize_matrix(ns.codingcontract.getData(contractName, server));
-						ns.codingcontract.attempt(result, contractName, server);
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
 						break;
 					case "Subarray with Maximum Sum":
 						result = dpMaximumSubarray(ns.codingcontract.getData(contractName, server));
-						ns.codingcontract.attempt(result, contractName, server);
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
 						break;
 					case "Algorithmic Stock Trader I":
 						result = find_best_single_trade(ns.codingcontract.getData(contractName, server));
-						ns.codingcontract.attempt(result, contractName, server);
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
 						break;
 					case "Algorithmic Stock Trader II":
 						result = find_cumulative_profit(ns.codingcontract.getData(contractName, server));
-						ns.codingcontract.attempt(result, contractName, server);
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
 						break;
 					case "Unique Paths in a Grid II":
 						result = unique_paths_with_obstacles(ns.codingcontract.getData(contractName, server))[unique_paths_with_obstacles(ns.codingcontract.getData(contractName, server)).length - 1];
-						ns.codingcontract.attempt(result, contractName, server);
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
 						break;
 					case "Minimum Path Sum in a Triangle":
 						result = minSumPath(ns.codingcontract.getData(contractName, server));
-						ns.codingcontract.attempt(result, contractName, server);
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
+						break;
+					case "Array Jumping Game":
+						result = array_jumping_can_win(ns.codingcontract.getData(contractName, server));
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
+						break;
+					case "Find Largest Prime Factor":
+						result = find_largest_prime_factor(ns.codingcontract.getData(contractName, server));
+						ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
 						break;
 					default:
 						break;
@@ -230,21 +297,22 @@ export async function main(ns) {
 			"Daedalus",
 			"Sector-12",
 			"Tian Di Hui",
+			"The Black Hand"
 		];
 		for (let faction of faction_list) {
 			try {
 				ns.joinFaction(faction);
 			} catch (e) {}
 		}
-
-		 if (ns.getFactionRep("CyberSec") < 12500) {
-			ns.workForFaction("CyberSec", "Hacking Contracts");
+		if (ns.getFactionRep("BitRunners") < 250000) {
+			ns.workForFaction("BitRunners", "Hacking Contracts");
 		 }
 		 if (ns.getFactionRep("NiteSec") < 112500) {
 			ns.workForFaction("NiteSec", "Hacking Contracts");
 		 }
-		 if (ns.getFactionRep("BitRunners") < 112500) {
-			ns.workForFaction("BitRunners", "Hacking Contracts");
+
+		 if (ns.getFactionRep("CyberSec") < 12500) {
+			ns.workForFaction("CyberSec", "Hacking Contracts");
 		 }
 		 
 	/*****************
