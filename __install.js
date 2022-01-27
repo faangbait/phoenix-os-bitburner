@@ -30,7 +30,6 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.scp.js","sbin.scp.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.hnet.js","sbin.hnet.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.keepalive.js","sbin.keepalive.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.list.js","sbin.list.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.market.js","sbin.market.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.sudo.js","sbin.sudo.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/src.prettytable.js","src.prettytable.js");
