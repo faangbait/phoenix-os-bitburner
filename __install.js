@@ -41,5 +41,8 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.nohacks.js","strategy.nohacks.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.rep.js","strategy.rep.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.constants.js","var.constants.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.debug.txt","var.debug.txt");    
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/contracts.js","usr/contracts.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/list.js","usr/list.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/route.js","usr/route.js");
+     
 }

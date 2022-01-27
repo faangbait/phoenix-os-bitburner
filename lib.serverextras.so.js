@@ -43,12 +43,3 @@ export function getAllServers(ns, server=undefined) {
         return Array.from(server_list.keys());
     }
 }
-
-export async function main(ns) {
-    ns.tprint(getAllServers(ns, ns.args[0]));
-}
-
-
-export function autocomplete(data, args) {
-    return data.servers;
-}

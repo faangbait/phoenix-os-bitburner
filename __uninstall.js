@@ -18,4 +18,8 @@ export async function main(ns) {
     for (let file of ns.ls("home", "var.")) {
         if (await ns.prompt(`Really delete ${file}?`)) { ns.rm(file);}
     }
+    for (let file of ns.ls("home", "utils/")) {
+        if (await ns.prompt(`Really delete ${file}?`)) { ns.rm(file);}
+    }
+    
 }
