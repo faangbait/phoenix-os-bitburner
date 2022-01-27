@@ -371,14 +371,15 @@ export default class Default {
      * @memberof Default
      */
     __iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids) {
-        for (let t of targets) {
-            if (this.complete_when(t)) {
-                t.status = semaphores.COMPLETED;
-            }
-        }
+//this is still broken as of v1
+//         for (let t of targets) {
+//             if (this.complete_when(t)) {
+//                 t.status = semaphores.COMPLETED;
+//             }
+//         }
 
-        let completed = servers.filter(server => server.status === semaphores.COMPLETED).map(server => server.hostname);
-        servers.map(server => server.pids).flat().filter(process => completed.includes(process.target) || completed.includes(process.args[0])).forEach(process => globalThis.ns.kill(process.pid));
+//         let completed = servers.filter(server => server.status === semaphores.COMPLETED).map(server => server.hostname);
+//         servers.map(server => server.pids).flat().filter(process => completed.includes(process.target) || completed.includes(process.args[0])).forEach(process => globalThis.ns.kill(process.pid));
 
 
         servers.filter(s => s.threadCount(this.memory_req) > 0).filter(s => ![semaphores.ILLEGAL, semaphores.DISQUALIFIED].includes(s.status)).forEach(s => s.status = semaphores.AVAILABLE);
