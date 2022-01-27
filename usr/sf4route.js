@@ -1,3 +1,6 @@
+/**
+ * @typedef {import(".").NS} ns
+ */
 import { getAllServers } from "./lib.serverextras.so";
 
 /**
@@ -5,10 +8,13 @@ import { getAllServers } from "./lib.serverextras.so";
  * 
  * @argument hostname
  * @export
- * @param {*} ns
+ * @param {import(".").NS} ns
  */
 export async function main(ns) {
-    ns.tprint(getAllServers(ns, ns.args[0]));
+    let route = getAllServers(ns, ns.args[0], true);
+    for (let link of route) {
+        ns.connect(link);
+    }
 }
 
 

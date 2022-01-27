@@ -6,7 +6,7 @@
  * @param {string} [server=undefined]
  * @return {string[]} 
  */
-export function getAllServers(ns, server=undefined) {
+export function getAllServers(ns, server=undefined, sf4=false) {
     const server_list = new Set();
     let route = [];
     const scanNode = (parent, server, target, route) => {
@@ -38,7 +38,11 @@ export function getAllServers(ns, server=undefined) {
     scanNode('', 'home', server, route);
 
     if (server) {
-        return "connect " + route.join("; connect ") + "; backdoor";
+        if (sf4) {
+            return route;
+        } else {
+            return "connect " + route.join("; connect ") + "; backdoor";
+        }
     } else {
         return Array.from(server_list.keys());
     }
