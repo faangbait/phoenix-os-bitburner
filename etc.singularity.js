@@ -237,13 +237,13 @@ export async function main(ns) {
 			} catch (e) {}
 		}
 
-		while (ns.getFactionRep("CyberSec") < 12500) {
+		 if (ns.getFactionRep("CyberSec") < 12500) {
 			ns.workForFaction("CyberSec", "Hacking Contracts");
 		 }
-		 while (ns.getFactionRep("NiteSec") < 112500) {
+		 if (ns.getFactionRep("NiteSec") < 112500) {
 			ns.workForFaction("NiteSec", "Hacking Contracts");
 		 }
-		 while (ns.getFactionRep("BitRunners") < 112500) {
+		 if (ns.getFactionRep("BitRunners") < 112500) {
 			ns.workForFaction("BitRunners", "Hacking Contracts");
 		 }
 		 
