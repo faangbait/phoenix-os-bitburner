@@ -1,4 +1,4 @@
-export const reservedHomeRam = 32;
+export const reservedHomeRam = 64;
 export const loop_time = 20000;
 
 const HackSemaphores = {
