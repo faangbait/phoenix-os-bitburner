@@ -43,5 +43,6 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/contracts.js","usr/contracts.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/list.js","usr/list.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/route.js","usr/route.js");
-     
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/aliases.txt","usr/aliases.txt");
+
 }
