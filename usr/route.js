@@ -1,4 +1,4 @@
-import { getAllServers } from "../lib.serverextras.so";
+import { getAllServers } from "./lib.serverextras.so";
 
 /**
  * displays a copy-and-pasteable route to a server
