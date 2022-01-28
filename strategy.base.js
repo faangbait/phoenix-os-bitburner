@@ -9,8 +9,11 @@ import {
     strategy_semaphores
 } from "./var.constants";
 import PrettyTable from "./src.prettytable";
+import { PriorityQueue } from "./lib.structures.so";
 
 export const semaphores = strategy_semaphores;
+
+
 /**
  * Default strategy algorithm.
  * 
@@ -24,22 +27,27 @@ export const semaphores = strategy_semaphores;
  */
 export default class Default {
     constructor(ns, player, servers) {
+        this.priorityQueue = new PriorityQueue();
+
         this.files = [{
             path: "bin.universal.loop.js",
-            ram: 2.4
+            ram: 2.4,
+            ratio: 1
         }];
         
-        // by default, we assume files here will all be executed on the target at equal thread counts. you can override this.memory_req.
-        this.memory_req = this.files.reduce((a,b) => a+b.ram, 0);
+        this.memory_req = this.files.reduce((a,b) => a+ (b.ram * b.ratio), 0);
         this.stagger = 1;
-        // this.optimize_thread_splitting = true; // if true, very powerful servers (hundreds of thousands of threads) will attack multiple targets no matter what the strategy is
+
+        // if true, very powerful servers (hundreds of thousands of threads) will attack multiple targets no matter what the strategy is
+        // currently: always enabled
+        // this.optimize_thread_splitting = true; 
     }
 
     /**
      * Disqualifies some (legal) servers from being considered as attackers.
-     * Default: Disqualify no legal attackers
+     * Default: Disqualify no (legal) attackers. Legal attackers are defined in __qualify, part of the core package and not able to be overriden.
      * 
-     * @param {ServerObject} s Server to consider
+     * @param {ServerObject} s The server to consider. 
      * @return {boolean} true if server disqualified
      * @memberof Default
      * @override
@@ -60,12 +68,11 @@ export default class Default {
         let args = [a.id];
         args.push(...this.files.map(f => f.path));
 
-        if (globalThis.ns.exec('sbin.scp.js', 'home', 1, ...args)) {
-            a.status = semaphores.BOOTSTRAPPED;
-        } else {
-            globalThis.ns.tprint("Error bootstrapping ", a.id);
+        try {
+            globalThis.ns.exec("sbin.scp.js", "home", 1, ...args);
+        } catch (e) {
+            ns.tprint("error bootstrapping");
         }
-
         return a;
     }
 
@@ -80,38 +87,45 @@ export default class Default {
      */
     disqualify_target(t) {
         return (t.id === "n00dles");
+        // return (t.id !== "n00dles");
     }
 
+
     /**
-     * A sorted order of preferred targets.
+     * A priority queue. 
+     * 
+     * Acceptable priorities range from 20 (lowest priority) to 0 (highest priority)
+     * A target that matches no condition defined below will receive a priority of 15.
+     * 
+     * Targets that match the specified filters will be assigned a priority,
+     * the numerical value on the left. A target that would match both "10" and
+     * "20" at the same time will recieve a priority of 10.
+     * 
+     * Lowest value gets attacked first.
+     * Priority values can be duplicated.
+     * 
+     * There's no reason you couldn't write some equations to set target priority, since
+     * it's integer based...
+     * 
+     * On every loop, all legal targets' priorities reset to 0. If no targets match
+     * any of the conditions defined below, all legal targets will become equally
+     * likely to receive an attack.
      *
-     * A list of booleans. Return TRUE if a server is preferred.
-     * Return an empty list to perform no filtering.
-     * 
-     * Targets will be checked in order. They will continue to be filtered
-     * until a filter would return NO targets; this filter will be ignored
-     * and the preceding filter(s) will be the final targeting filter.
-     * 
+     * @return {Map} 
      * @memberof Default
-     * @override
      */
     filter_targets() {
-        return [
-            (t => t.level < 400),
-            (t => t.money.max > 100000000),
-        ];
-    }
+        let priorities = new Map();
 
-    /**
-     * Gives the final sieve one last sort.
-     * Default: Prefer the lowest level target
-     *
-     * @param {ServerObject[]} targets
-     * @memberof Default
-     * @override
-     */
-    sort_targets(targets) {
-        return targets.sort((a, b) => a.level - b.level);
+        priorities.set(0, (t => (t.money.available / t.money.max) == 1));
+        priorities.set(5, (t => t.security.level == t.security.min));
+        priorities.set(10, (t => t.level < 100));
+        priorities.set(14, (t => t.hackTime < 60));
+        // default: 15, so the filter below probably won't ever get attacked.
+        // if you need to definitively prevent attacks, use disqualify_target()
+        priorities.set(17, (t => t.security.level > 80));
+
+        return priorities;
     }
 
     /**
@@ -124,22 +138,52 @@ export default class Default {
     */
     prepare_package(a, targets) {
         var bundles = [];
-        var ram_used_this_bundle = 0;
+        var remaining_ram = a.ram.free;
 
-        targets.forEach(target => {
-            ram_used_this_bundle += Math.floor(a.threadCount(this.memory_req)) * this.memory_req;
+        let target = this.priorityQueue.poll();
 
-            if (a.ram.free >= ram_used_this_bundle )
-            for (let { path, ram } of this.files) {
-                bundles.push(JSON.stringify({
-                    file: path,
-                    attacker: a.id,
-                    threads: Math.floor(a.threadCount(this.memory_req / ( ram / this.memory_req))),
-                    args: [target.id]
-                }));
+        while (target) {
+            while (remaining_ram >= this.memory_req) {
+                let suggested_bundle = [];
+                let bundle_ram = 0;
+                for (let {
+                        path,
+                        ram,
+                        ratio
+                    } of this.files) {
+                    let threads = a.threadCount(this.memory_req / ratio);
+                    threads = Math.max(1, threads); // minimum 1 thread
+                    threads = Math.floor(threads); // round to floor
+                    suggested_bundle.push({
+                        file: path,
+                        attacker: a.id,
+                        threads: threads,
+                        args: [target.id]
+                    });
+                    bundle_ram += threads * ram;
+                }
+                // ns.tprint("Suggested bundle: ", suggested_bundle);
+                if (suggested_bundle.length == this.files.length &&
+                    bundle_ram <= remaining_ram &&
+                    suggested_bundle.every(b => b.threads > 0) &&
+                    suggested_bundle.every(b => typeof b.attacker === "string")) {
+                    bundles.push(...suggested_bundle.map(b => JSON.stringify(b)));
+                    remaining_ram -= bundle_ram;
+                } else {
+                    // ns.tprint("Couldn't push bundle: ",
+                    // (suggested_bundle.length == this.files.length)," ",
+                    // (bundle_ram <= remaining_ram), " ",
+                    // suggested_bundle.every(b => b.threads > 0)," ",
+                    // suggested_bundle.every(b => typeof b.attacker === "string")," ",
+                    // );
+                    remaining_ram = 0;
+                }
 
-               }
-        });
+            }
+            target = this.priorityQueue.poll();
+        }
+
+        // ns.tprint("Bundles: ", bundles);
         return bundles;
     }
 
@@ -158,14 +202,8 @@ export default class Default {
         for (let attack of e) {
             let attack_array = JSON.parse(attack);
             pids.push(globalThis.ns.exec(attack_array.file, attack_array.attacker, attack_array.threads, ...attack_array.args));
-           
         }
-            
         return pids;
-    }
-
-    complete_when(t) { // when to mark a target complete
-        return (t.money.available / t.money.max < 0.01);
     }
 
     /**
@@ -181,30 +219,33 @@ export default class Default {
      * @memberof Default
      */
     iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids) {
-        if (ns.read("var.debug.txt")) {var debug_mode = true;} else {var debug_mode = false;};
+        var debug_mode = false;
+        
+        if (ns.read("var.debug.txt")) {
+            debug_mode = true;
+        }
 
         if (!debug_mode) {
             let pt = new PrettyTable();
-            let headers = ["AVAIL", "DISQ", "PROG", "SAT", "COMPL"];
+
+            let headers = ["UNQUAL", "AVAIL", "FULL"];
 
             let rows = [];
-            for (let i = 0; i < 12; i++) {
+            let server_copy = Array.from([...servers.filter(s => s.admin && s.ram.max > 0)]);
+
+            for (let i = 0; i < Math.min(25, server_copy.length); i++) {
                 rows.push([
-                servers.filter(s => s.status == semaphores.AVAILABLE).map(s=>s.id)[i] || "",
-                servers.filter(s => s.status == semaphores.DISQUALIFIED).map(s=>s.id)[i] || "",
-                servers.filter(s => s.status == semaphores.IN_PROGRESS).map(s=>s.id)[i] || "",
-                servers.filter(s => s.status == semaphores.SATURATED).map(s=>s.id)[i] || "",
-                servers.filter(s => s.status == semaphores.COMPLETED).map(s=>s.id)[i] || "",
-            ]);
+                    server_copy.filter(s => s.ram.max < this.memory_req).map(s => s.id)[i] || "",
+                    server_copy.filter(s => s.ram.free >= this.memory_req ).map(s => s.id)[i] || "",
+                    server_copy.filter(s => s.ram.free < this.memory_req).map(s => s.id)[i] || "",
+                ]);
             }
-            
             pt.create(headers, rows);
             globalThis.ns.clearLog();
+            globalThis.ns.print("RAM UTILIZATION");
             globalThis.ns.print(pt.print());
         }
 
-
-        // servers.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE);
         return {servers, attackers, bootstrapped, targets, filtered, executions, pids};
     }
     
@@ -220,23 +261,13 @@ export default class Default {
      * @memberof Default
      */
     __qualify(servers) {
-        let qualified_array = [];
-        for (let s of servers) {
-            if ((s.status != semaphores.IN_PROGRESS && s.threadCount(this.memory_req) == 0) || this.disqualify_attacker(s)) {
-                s.status = semaphores.DISQUALIFIED;
-            }
-            if (!s.admin || !s.ram.max) {
-                s.status = semaphores.ILLEGAL;
-            }
-            if (![
-                semaphores.DISQUALIFIED,
-                semaphores.ILLEGAL,
-                semaphores.RESERVED
-            ].includes(s.status)) {
-                qualified_array.push(s);
-            }
-        }
-        return qualified_array;
+        let qualified_array = servers.filter(s => 
+            (s.threadCount(this.memory_req) > 0) &&
+            (s.admin) &&
+            (!this.disqualify_attacker(s))
+            );
+            // ns.tprint(qualified_array.map(s=>s.id))
+            return qualified_array;
     }
 
     /**
@@ -249,14 +280,8 @@ export default class Default {
      * @override
      */
     __bootstrap(attackers) {
-        let bootstrapped = attackers.filter(a => ![
-            semaphores.BOOTSTRAPPED,
-            semaphores.IN_PROGRESS,
-            semaphores.HOLD,
-            semaphores.CANCELLED,
-            semaphores.DISQUALIFIED,
-        ].includes(a.status));
-        bootstrapped.sort((a,b) => b.ram.max - a.ram.max);
+        let bootstrapped = attackers.sort((a,b) => b.ram.max - a.ram.max);
+        // ns.tprint(bootstrapped.map(s=>s.id))
         return bootstrapped.slice(0, this.stagger).map(a => this.bootstrap(a));
     }
 
@@ -268,21 +293,14 @@ export default class Default {
      * @memberof Default
      */
     __target(servers) {
-        let target_array = [];
-
-        for (let t of servers) {
-            if (t.money.max > 0 && t.admin && t.id != "home") {
-                if (![
-                    semaphores.COMPLETED,
-                    semaphores.ILLEGAL,
-                    semaphores.RESERVED,
-                ].includes(t));
-                target_array.push(t);
-            }
-        }
-
-        target_array = target_array.filter(t => !this.disqualify_target(t));
-
+        let target_array = servers.filter(s => 
+            (s.money.max > 0) &&
+            (s.level < globalThis.ns.getPlayer().hacking) &&
+            (s.admin) &&
+            (s.id != "home") &&
+            (!this.disqualify_target(s))
+            );
+            target_array.forEach(t => this.priorityQueue.add(t, 15));
         return target_array;
     }
 
@@ -295,42 +313,19 @@ export default class Default {
      * @return {ServerObject} a single target
      */
     __filter_targets(targets) {
-        let sieve_generator = this.__sieve_targets(targets);
-        var sieved_targets = [];
+        let filter_map = this.filter_targets();
 
-        var sieve;
-        do {
-            sieve = sieve_generator.next();
-            sieved_targets.push(sieve.value);
-        } while (!sieve.done);
-        return this.sort_targets(sieved_targets.reverse().pop());
-
-    }
-
-    /**
-     * Generator to execute the sieve
-     *
-     * @param {ServerObject[]} targets
-     * @return {ServerObject[]} 
-     * @memberof Default
-     */
-    * __sieve_targets(targets) { // do not overload ever
-        var selector = this.filter_targets();
-        let sieved_targets = targets;
-        let guaranteed_target = targets.pop();
-
-        if (targets.length === 0) {
-            return [guaranteed_target];
+        for (const [priority, filter] of filter_map) {
+            let priority_targets = targets.filter(filter);
+            for (let target of priority_targets) {
+                if (this.priorityQueue.findByValue(target) > priority) {
+                    this.priorityQueue.changePriority(target, priority);
+                }
+                
+            }
         }
-        
-        for (let t of selector) {
-            sieved_targets = targets;
-
-            targets = targets.filter(t);
-            if (targets.length === 0) { return sieved_targets; }
-
-            yield targets;
-        }
+        // ns.tprint(targets.map(t=>t.id));
+        return targets;
     }
 
     /**
@@ -342,8 +337,9 @@ export default class Default {
      * @memberof Default
      */
     __package(bootstrapped, targets) {
-        bootstrapped.forEach(s => s.status = semaphores.IN_PROGRESS);
-        return bootstrapped.map(a => this.prepare_package(a, targets));
+        let packaged = bootstrapped.map(a => this.prepare_package(a, targets));
+        ns.tprint(packaged);
+        return packaged;
     }
 
     /**
@@ -354,7 +350,6 @@ export default class Default {
      * @memberof Default
      */
     __deploy(executions) {
-
         return executions.map(e => this.deploy_package(e));
     }
 
@@ -371,21 +366,6 @@ export default class Default {
      * @memberof Default
      */
     __iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids) {
-//this is still broken as of v1
-//         for (let t of targets) {
-//             if (this.complete_when(t)) {
-//                 t.status = semaphores.COMPLETED;
-//             }
-//         }
-
-//         let completed = servers.filter(server => server.status === semaphores.COMPLETED).map(server => server.hostname);
-//         servers.map(server => server.pids).flat().filter(process => completed.includes(process.target) || completed.includes(process.args[0])).forEach(process => globalThis.ns.kill(process.pid));
-
-
-        servers.filter(s => s.threadCount(this.memory_req) > 0).filter(s => ![semaphores.ILLEGAL, semaphores.DISQUALIFIED].includes(s.status)).forEach(s => s.status = semaphores.AVAILABLE);
-        bootstrapped.filter(s => s.pids.length == 0).forEach(p => p.status = semaphores.AVAILABLE); // catch failed deployments
-       
         return this.iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids);
     }
 }
-
