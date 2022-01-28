@@ -58,7 +58,7 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
          ({player, servers}    = await gameStage.post_hack   (ns, player, servers));
          ({player, servers}    = await moneyStage.end_step   (ns, player, servers));
 
-         if (Math.random < 0.1) {
+         if (Math.random() < 0.1) {
              motd.banner_short(ns, start_time);
          }
 
@@ -75,16 +75,18 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
   */
  function display_deltas(ns, player, servers, gameStage, moneyStage) {
     ns.tprint(new Date().toLocaleTimeString(), "  Game Stage: ", new gameStage().constructor.name, "    Resource allocation: ", new moneyStage().constructor.name);
-    let delta_money = ((player.money - player.last_money) / loop_time)*1000*60;
-    let delta_xp = ((player.hacking.exp - player.last_xp) / loop_time)*1000*60;
-
-    if (Math.random < 0.5) {
-        ns.tprint(fmt_cash(delta_money), " $/min    ",fmt_num(delta_xp)," xp/min");
+    
+    if (Math.random() < 0.5) {
+        let delta_money = ((player.money - player.last_money) / loop_time)*1000*60;
+        let delta_xp = ((player.hacking.exp - player.last_xp) / loop_time)*1000*60;
+    
+        ns.tprint(fmt_cash(delta_money), " $/min    ",fmt_num(delta_xp)," xp since last notice");
         ns.tprint(purchased(servers).length, " racked servers @ ", fmt_bits(ram(purchased(servers))), " total RAM.");
-     }
 
-     player.last_money = player.money;
-     player.last_xp = player.hacking.exp;
+        player.last_money = player.money;
+        player.last_xp = player.hacking.exp;
+   }
+
  }
 
  function display_notices(ns, player, servers, gameStage, moneyStage) {
