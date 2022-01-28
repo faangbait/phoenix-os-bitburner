@@ -26,6 +26,7 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.server.so.js","lib.server.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.serverextras.so.js","lib.serverextras.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.utils.so.js","lib.utils.so.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.structures.so.js","lib.structures.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/phoenix.js","phoenix.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.scp.js","sbin.scp.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.hnet.js","sbin.hnet.js");
