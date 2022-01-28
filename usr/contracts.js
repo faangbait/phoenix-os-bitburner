@@ -78,6 +78,24 @@ const array_jumping_can_win = (solution_array) => {
     return array_jumping_traverse_graph(graph, 0);
 };
 
+
+function twts(N, K)
+{   
+    let dp = Array.from({length: N +1}, (_, i) => 0);
+    dp[0] = 1;
+    for(let row = 1; row < K + 1; row++)
+    {
+        for(let col = 1; col < N + 1; col++)
+        {
+            if (col >= row)
+                dp[col] = dp[col] + dp[col - row];
+          }
+    }
+ 
+    return(dp[N]-1);
+}
+
+
 const find_largest_prime_factor = (target) => {
     var x = 2;
     while (x <= target) {
@@ -149,6 +167,14 @@ const find_best_single_trade = (array) => {
         idx++;
     }
     return best_single_trade;
+};
+const find_cumulative_profit = (array) => {
+    return array.reduce(function (accumulator, current, idx, arr) {
+        if (arr[idx+1] > current){
+            // console.log("Index ", idx, " profit ", (arr[idx+1]-current), " cumulatively ", accumulator);
+            return accumulator + (arr[idx+1]-current);
+        } else { return accumulator || 0; }
+    }, 0);
 };
 
 const unique_paths_with_obstacles = (arr) => {
@@ -289,6 +315,11 @@ export async function main(ns) {
                     result = find_largest_prime_factor(ns.codingcontract.getData(contractName, server));
                     ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
                     break;
+                case "Total Ways to Sum":
+                    result = twts(ns.codingcontract.getData(contractName, server));
+                    ns.tprint(ns.codingcontract.attempt(result, contractName, server, {returnReward: true}));
+                    break;
+                        
                 default:
                     break;
             }
