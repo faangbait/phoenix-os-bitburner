@@ -551,13 +551,13 @@ export class msPurchaseServers extends DefaultMoneyStage {
 
         if (strongestServers.length === maxServers && canAffordServer(nextUpgrade) && weakestServers[0].power < 18) {
             ns.exec("/etc.delete_server.js", "home", 1, weakestServers[0].id);
-            ns.tprint("Sold a server. Now we have ", strongestServers.length - 1);
+            // ns.tprint("Sold a server. Now we have ", strongestServers.length - 1);
             servers = servers.filter(s => s.id != weakestServers[0].id);
         }
 
         if (strongestServers.length < maxServers && canAffordServer(nextUpgrade)) {
             ns.exec("/etc.purchase_server.js", "home", 1, ram(nextUpgrade));
-            ns.tprint("Purchased a server. Now we have ", strongestServers.length + 1, ". Highest RAM: ", ram(nextUpgrade));
+            // ns.tprint("Purchased a server. Now we have ", strongestServers.length + 1, ". Highest RAM: ", ram(nextUpgrade));
         }
         
         return {player, servers};
