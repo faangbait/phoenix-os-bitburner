@@ -34,11 +34,11 @@
          ({servers, player} = updateData(ns, servers, player));
  
 
-        // var gameStage = determineGameStage(servers, player);
+        var gameStage = determineGameStage(servers, player);
         var moneyStage = determineResourceAllocation(servers, player);
 
         //dev
-        var gameStage = gs.gsdebugStage;
+        // var gameStage = gs.gsdebugStage;
 
          ({player, servers}    = await gameStage.untap       (ns, player, servers));
          ({player, servers}    = await moneyStage.upkeep     (ns, player, servers));
