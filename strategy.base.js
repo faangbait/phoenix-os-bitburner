@@ -338,7 +338,7 @@ export default class Default {
      */
     __package(bootstrapped, targets) {
         let packaged = bootstrapped.map(a => this.prepare_package(a, targets));
-        ns.tprint(packaged);
+        // ns.tprint(packaged);
         return packaged;
     }
 
