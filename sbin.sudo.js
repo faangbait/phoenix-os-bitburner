@@ -11,6 +11,30 @@ export async function main(ns) {
     } catch (e) {ns.print(e); }
     try {
         ns.nuke(targ);
+
+        await ns.scp([
+            "bin.gr.future.js",
+            "bin.gr.futureloop.js",
+            "bin.gr.loop.js",
+            "bin.gr.once.js",
+    
+            "bin.hk.future.js",
+            "bin.hk.futureloop.js",
+            "bin.hk.loop.js",
+            "bin.hk.once.js",
+    
+            "bin.wk.future.js",
+            "bin.wk.futureloop.js",
+            "bin.wk.loop.js",
+            "bin.wk.once.js",
+    
+            "bin.prep.js",
+            "bin.share.loop.js",
+            "bin.universal.loop.js",
+    
+        ], "home", targ);
+        
     } catch (e) {ns.print(e); }
+    
     
 }
