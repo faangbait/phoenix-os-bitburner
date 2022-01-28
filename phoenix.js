@@ -58,7 +58,10 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
          ({player, servers}    = await gameStage.post_hack   (ns, player, servers));
          ({player, servers}    = await moneyStage.end_step   (ns, player, servers));
 
-         motd.banner_short(ns, start_time);
+         if (Math.random < 0.1) {
+             motd.banner_short(ns, start_time);
+         }
+
          display_deltas(ns, player, servers, gameStage, moneyStage);
          display_notices(ns, player, servers, gameStage, moneyStage);
      }
@@ -71,23 +74,24 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
   * @param {PlayerObject} player
   */
  function display_deltas(ns, player, servers, gameStage, moneyStage) {
-     let delta_money = ((player.money - player.last_money) / loop_time)*1000*60;
-     let delta_xp = ((player.hacking.exp - player.last_xp) / loop_time)*1000*60;
+    ns.tprint("Game Stage: ", new gameStage().constructor.name, "    Resource allocation: ", new moneyStage().constructor.name);
+    let delta_money = ((player.money - player.last_money) / loop_time)*1000*60;
+    let delta_xp = ((player.hacking.exp - player.last_xp) / loop_time)*1000*60;
 
-     ns.tprint(fmt_cash(delta_money), " $/min    ",fmt_num(delta_xp)," xp/min");
-     ns.tprint(purchased(servers).length, " racked servers @ ", fmt_bits(ram(purchased(servers))), " total RAM.");
-     ns.tprint("Game Stage: ", new gameStage().constructor.name, "    Resource allocation: ", new moneyStage().constructor.name);
+    if (Math.random < 0.5) {
+        ns.tprint(fmt_cash(delta_money), " $/min    ",fmt_num(delta_xp)," xp/min");
+        ns.tprint(purchased(servers).length, " racked servers @ ", fmt_bits(ram(purchased(servers))), " total RAM.");
+     }
 
      player.last_money = player.money;
      player.last_xp = player.hacking.exp;
-
  }
 
  function display_notices(ns, player, servers, gameStage, moneyStage) {
      //check for faction backdoor
 
     let factions = ["CSEC", "avmnite-02h", "I.I.I.I", "run4theh111z"];
-    servers.filter(server => factions.includes(server.hostname) && server.admin && !server.backdoored)
+    servers.filter(server => factions.includes(server.hostname) && server.admin && !server.backdoored && player.level >= server.level)
     .forEach(server => ns.tprint("WARNING: You have admin on ", server.hostname, " but have not backdoored it yet."));
 
  }
