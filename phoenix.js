@@ -74,7 +74,7 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
   * @param {PlayerObject} player
   */
  function display_deltas(ns, player, servers, gameStage, moneyStage) {
-    ns.tprint("Game Stage: ", new gameStage().constructor.name, "    Resource allocation: ", new moneyStage().constructor.name);
+    ns.tprint(new Date().toLocaleTimeString(), "  Game Stage: ", new gameStage().constructor.name, "    Resource allocation: ", new moneyStage().constructor.name);
     let delta_money = ((player.money - player.last_money) / loop_time)*1000*60;
     let delta_xp = ((player.hacking.exp - player.last_xp) / loop_time)*1000*60;
 
