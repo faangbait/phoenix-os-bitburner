@@ -212,7 +212,7 @@ PrettyTable.prototype.sortTable = function (colname, reverse) {
               return 0;
           }
       }
-  }
+  };
   // Sort array of table rows
   this.table.rows = this.table.rows.sort(Comparator);
 };

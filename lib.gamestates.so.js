@@ -551,13 +551,13 @@ export class msPurchaseServers extends DefaultMoneyStage {
 
         if (strongestServers.length === maxServers && canAffordServer(nextUpgrade) && weakestServers[0].power < 18) {
             ns.exec("/etc.delete_server.js", "home", 1, weakestServers[0].id);
-            ns.tprint("Sold a server. Now we have ", strongestServers.length - 1);
+            // ns.tprint("Sold a server. Now we have ", strongestServers.length - 1);
             servers = servers.filter(s => s.id != weakestServers[0].id);
         }
 
         if (strongestServers.length < maxServers && canAffordServer(nextUpgrade)) {
             ns.exec("/etc.purchase_server.js", "home", 1, ram(nextUpgrade));
-            ns.tprint("Purchased a server. Now we have ", strongestServers.length + 1, ". Highest RAM: ", ram(nextUpgrade));
+            // ns.tprint("Purchased a server. Now we have ", strongestServers.length + 1, ". Highest RAM: ", ram(nextUpgrade));
         }
         
         return {player, servers};
@@ -684,5 +684,60 @@ export class msReadyforAug extends DefaultMoneyStage {
         // max neuroflux
         // reset via a function
         return {player, servers};
+    }
+}
+
+//********* DEV **********/
+export class gsdebugStage extends DefaultGameStage {
+    constructor() {super();}
+
+    static async post_hack(ns, player, servers) {
+
+        const filter_ready = (servers, player) => {
+            servers.sort((a, b) => a.level - b.level);
+            return servers.filter(function (s) {
+                return (s.admin) &&
+                    (!s.purchased) &&
+                    (s.money.max > 0) &&
+                    (s.money.available / s.money.max == 1) &&
+                    (s.level < player.level) &&
+                    (s.security.level - s.security.min == 0);
+            });
+        };
+        const filter_preptargets = (servers, player) => {
+            servers.sort((a, b) => a.level - b.level);
+            return servers.filter(function (s) {
+                return (s.admin) &&
+                    (!s.purchased) &&
+                    (s.money.max > 0) &&
+                    (s.money.max > s.money.available) &&
+                    (s.level < player.level) &&
+                    (s.security.level > s.security.min) &&
+                    (s.targeted_by.length == 0);
+            });
+        };
+
+        let prepared_targets = filter_ready(servers, player);
+    
+        let top_attackers = servers.filter(s => s.admin && s.ram.free >= 512);
+        top_attackers.sort((a, b) => b.ram.max - a.ram.max);
+
+        let next_targets = filter_preptargets(servers, player);
+        if (next_targets.length > 0 && top_attackers.length > 0) {
+            await ns.scp("bin.prep.js", "home", top_attackers[0].hostname);
+            ns.exec("bin.prep.js", top_attackers[0].hostname, top_attackers[0].threadCount(3.30, true), next_targets[0].hostname);
+        }
+
+        ns.print("Preparing to ready ", next_targets[0].id);
+
+
+        return {player, servers};
+    }
+
+    static select_algorithm(ns, player, servers) {
+        ns.tprint("Debug");
+        const algo = new hwgw(ns, player, servers);
+        return algo;
+
     }
 }

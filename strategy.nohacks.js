@@ -13,30 +13,34 @@ export default class GoodGuy extends Default {
         this.files = [
             {
                 path: "bin.gr.loop.js",
-                ram: 1.75
+                ram: 1.75,
+                ratio: 0.8
             },
             {
                 path: "bin.wk.loop.js",
-                ram: 1.75
+                ram: 1.75,
+                ratio: 0.1
             },
             {
                 path: "bin.share.loop.js",
-                ram: 4
+                ram: 4,
+                ratio: 0.1
             }
         ];
         this.stagger = 1;
-        this.memory_req = 7.5;
     }
 
     /**
-     * Disqualify targets that need to be prepped.
+     * Prefer targets that need grow/weaken.
      *
      * @param {ServerObject} t
      * @return {boolean} 
      * @memberof GoodGuy
      */
-    complete_when(t) {
-        return (t.money.available / t.money.max == 1 && t.security.min == t.security.level);
+     filter_targets() {
+        let priorities = new Map();
+        priorities.set(0, (t => (t.money.available / t.money.max) < 1));
+        priorities.set(5, (t => t.security.level > t.security.min));
+        return priorities;
     }
-    
 }

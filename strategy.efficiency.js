@@ -11,6 +11,8 @@ export default class Balanced extends Default {
      * 
      * For servers under 64GB, we want them to share.
      * 
+     * Note the use of ratios; if they don't sum to 1, you'll get errors with invalid threadcounts.
+     * 
      * @memberof Balanced
      */
     constructor() {
@@ -23,21 +25,20 @@ export default class Balanced extends Default {
             {
                 path: "bin.gr.loop.js",
                 ram: 1.75,
-                ratio: 46 / 64
+                ratio: 45 / 64
             },
             {
                 path: "bin.wk.loop.js",
                 ram: 1.75,
-                ratio: 15 / 64
+                ratio: 14 / 64
             },
             {
                 path: "bin.share.loop.js",
                 ram: 4,
-                ratio: 1
+                ratio: 4/64
             },
         ];
         this.stagger = 8;
-        this.memory_req = 4;
     }
 
     /**
@@ -53,59 +54,4 @@ export default class Balanced extends Default {
         return (s.ram.max < 4);
     }
 
-    /**
-     * Prefer targets with more than 75% of their money available.
-     *
-     * @memberof Balanced
-     */
-    // filter_targets() {
-    //     return [
-    //         (t => t.money.available / t.money.max > 0.75),
-    //         (t => t.money.available / t.money.max > 0.25),
-    //     ];
-    // }
-    sort_targets(targets) {
-        return targets.sort ((a,b) => a.security.level- b.security_level);
-    }
-
-    /**
-     *  This determines what happens during the attack. First, if
-     *  the attacker has less than 64 GB of RAM, we launch share with
-     *  max threads.
-     * 
-     *  If the attacker has more than 64 GB of RAM, we launch hk/gr/wk scripts
-     *  in a ratio designated in the constructor.
-     *
-     * @param {ServerObject} a attacker
-     * @param {ServerObject[]} targets
-     * @return {string[]}  JSON attack array
-     * @memberof Balanced
-     */
-    prepare_package(a, targets) {
-        var bundles = [];
-        if (a.ram.max < 64) {
-            bundles.push(JSON.stringify({
-                file: this.files[3].path,
-                attacker: a.id,
-                threads: a.threadCount(this.files[3].ram, true),
-                args: []
-            }));
-        } else if (targets.length > 0) {
-            for (let {
-                    path,
-                    ram,
-                    ratio
-                } of this.files) {
-                if (Math.floor(a.threadCount(ram, true) * ratio) > 0) {
-                    bundles.push(JSON.stringify({
-                        file: path,
-                        attacker: a.id,
-                        threads: Math.floor(a.threadCount( this.memory_req / ratio )),
-                        args: [targets[0].id]
-                    }));
-                }
-            }
-        }
-        return bundles;
-    }
 }

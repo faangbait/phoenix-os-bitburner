@@ -26,6 +26,7 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.server.so.js","lib.server.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.serverextras.so.js","lib.serverextras.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.utils.so.js","lib.utils.so.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.structures.so.js","lib.structures.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/phoenix.js","phoenix.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.scp.js","sbin.scp.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.hnet.js","sbin.hnet.js");
@@ -40,9 +41,18 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.nohacks.js","strategy.nohacks.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.rep.js","strategy.rep.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.constants.js","var.constants.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicHacking.js","var.logicHacking.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicMoney.js","var.logicMoney.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/contracts.js","usr/contracts.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/list.js","usr/list.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/route.js","usr/route.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/aliases.txt","usr/aliases.txt");
 
+
+    ns.tprint("Phoenix OS kernel v1.0.0 has been loaded into ", ns.getHostname());
+    ns.tprint("You can start Phoenix by running phoenix.js or sbin.keepalive.js");
+    if (await ns.prompt("Phoenix OS has been installed. Would you like to launch now?")) {
+        ns.tprint("Starting Phoenix in 10s...");
+        ns.spawn('phoenix.js');
+    }
 }
