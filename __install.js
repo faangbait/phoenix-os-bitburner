@@ -41,10 +41,13 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.nohacks.js","strategy.nohacks.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.rep.js","strategy.rep.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.constants.js","var.constants.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicHacking.js","var.logicHacking.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicMoney.js","var.logicMoney.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/contracts.js","usr/contracts.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/list.js","usr/list.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/route.js","usr/route.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/aliases.txt","usr/aliases.txt");
+
 
     ns.tprint("Phoenix OS kernel v1.0.0 has been loaded into ", ns.getHostname());
     ns.tprint("You can start Phoenix by running phoenix.js or sbin.keepalive.js");

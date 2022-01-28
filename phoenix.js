@@ -7,11 +7,21 @@
 
  import * as motd from "./etc.motd";
  import updateData, { firstLoad } from "./lib.loader.so";
- import * as gs from "./lib.gamestates.so";
  import { loop_time } from "./var.constants";
- import { fmt_cash, fmt_num, fmt_bits, hashpower, ram, hashrate, purchased, owned } from "./lib.utils.so";
+ import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.utils.so";
+ 
+ /***************************************************************/
+ /* I strongly suggest you move these files somewhere else.     */
+ /* You'll probably want to update this software in the future  */
+ /* without losing all your customizations.                     */
 
- const singularity = true; // source file 4, not in default, see "sf4" branch on github.
+ import { determineResourceAllocation } from "./var.logicMoney";
+ import { determineGameStage } from "./var.logicHacking";
+
+
+ /***************************************************************/
+ 
+const singularity = true; // source file 4, not in default, see "sf4" branch on github.
 
  export async function main(ns){
      globalThis.ns = ns;
@@ -25,9 +35,9 @@
         .forEach(process => ns.kill(process.pid));
     
     // start additional scripts
-//     if (singularity) {
-//         ns.exec("etc.singularity.js", "home");
-//     }
+    //     if (singularity) {
+    //         ns.exec("etc.singularity.js", "home");
+    //     }
     
      while (true) {
          await heartbeat();
@@ -54,146 +64,6 @@
      }
 
  }
-
-/**
- * "What to buy" logic goes here.
- *
- * @param {ServerObject[]} servers
- * @param {PlayerObject} player
- * @return {gs.DefaultGameStage} 
- */
-function determineResourceAllocation(servers, player) {
-    var moneyStage = gs.DefaultMoneyStage;
-
-    if (player.ports > 0) {
-
-        const spendCompare = [
-            {
-                cls: gs.msPurchaseServers,
-                compareFns: [
-                    (purchased(servers).length < 25), // still haven't bought 25 servers, we're eligible to buy
-                    (hashpower(purchased(servers)) < 425) // all servers ~2^17 or higher, we stop sell-buying
-                ]
-            },
-            {
-                cls: gs.msHnet,
-                compareFns: [
-                    (player.hacking.level < (100 * (1 / player.hnet.multipliers.purchaseCost))),
-                    (player.playtime.sinceAug < 4*60*1000)
-                ]
-            },
-            {
-                cls: gs.msSpendthrift,
-                compareFns: [ // if any of these resolve true, we'll stop buying things, but we'll stay in the market if we can.
-                    (player.ports === 0 && player.money < 700*1000),
-                    (player.ports === 1 && player.money < 1.5*1000*1000),
-                    (player.ports === 2 && player.money < 5*1000*1000),
-                    (player.hacking.level > 2000 && owned(servers).reduce((a,b) => a+b.ram.max) >= Math.pow(2,20))
-
-                ]
-            },
-            {
-                cls: gs.msStockMarket,
-                compareFns: [
-                    (player.market.api.fourSigma == true && hashpower(owned(servers)) >= 250), // minimum 20Tb in servers
-                    (player.market.api.fourSigma == true && owned(servers).reduce((a,b) => a+b.ram.max) >= 10e15), 
-                ]
-            },
-            {
-                cls: gs.msReadyforAug,
-                compareFns: [
-                    (ns.readPort(1) == "READY FOR AUG"),
-                    (player.money > Math.pow(10,12)),
-                    (servers.filter(s => s.id === String.fromCharCode(119, 48, 114, 49, 100, 95, 100, 52, 51, 109, 48, 110)).length > 0),
-        
-                ]
-            }
-        ];
-
-        for (const stg of spendCompare) {
-            for (const fn of stg.compareFns) {
-                if (fn) {
-                    moneyStage = stg.cls;
-                }
-            }
-        }
-    }
-    return moneyStage;
-}
-
-function determineGameStage(servers, player) {
-    var gameStage = gs.DefaultGameStage;
-
-    /** @constant
-     *
-     * ordered by reverse preference. if a later stage applies, it will be selected.
-     * e.g. if "early game" is designated by "not in cybersec" but if "end game"
-     * is designated by "membership in daedalus", if you're in daedalus but not
-     * in cybersec, you'll be placed in the endgame stage, because it's later.
-     *
-     * When multiple compareFns are specified for a stage, they are OR statements,
-     * and if either is true, that stage will resolve as true.
-     *
-     */
-    const stageCompare = [
-        {
-            cls: gs.gsNewGame,
-            compareFns: [
-                (servers.filter(s => s.id === "foodnstuff" & !s.admin).length > 0),
-                (player.hacking.level < 100),
-            ]
-        },
-
-        {
-            cls: gs.gsEarlyGame,
-            compareFns: [
-                (player.faction.membership.includes("CyberSec")),
-                // (player.ports > 2) // skips the "new game" rote setup if the player has advanced augments
-            ]
-        },
-        {
-            cls: gs.gsMidGame,
-            compareFns: [
-                (player.faction.membership.includes("BitRunners")),
-                (servers.map(s => s.ram.max).reduce((a,b) => a+b,0) > 10e7),
-            ]
-        },
-        {
-            cls: gs.gsLateGame,
-            compareFns: [
-                (player.faction.membership.includes("Daedalus")),
-            ]
-        },
-        {
-            cls: gs.gsEndGame,
-            compareFns: [
-                (servers.filter(s => s.id === String.fromCharCode(119, 48, 114, 49, 100, 95, 100, 52, 51, 109, 48, 110)).length > 0),
-            ]
-        },
-        // { // moved to hwgw
-        //     cls: gs.gsRepair,
-        //     compareFns: [
-        //         (servers.filter(s => s.level < 100 && s.money.available / s.money.max < 0.1).length > 7),
-        //     ]
-        // },
-        {
-            cls: gs.gsReadyForAug,
-            compareFns: [
-                (ns.readPort(1) == "READY FOR AUG"),
-                (player.money > Math.pow(10,12))
-            ]
-        }
-    ];
-
-    for (const stg of stageCompare) {
-        for (const fn of stg.compareFns) {
-            if (fn) {
-                gameStage = stg.cls;
-            }
-        }
-    }
-    return gameStage;
-}
 
  /**
   * Displays info at the bottom of terminal
