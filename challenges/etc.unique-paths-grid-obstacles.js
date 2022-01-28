@@ -75,12 +75,29 @@ const unique_paths_with_obstacles = (arr) => {
     return paths[r - 1][paths[r - 1].length - 1];
 };
 
-var solution_array = [
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, ],
-];
+// var solution_array = [
+//     [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, ],
+//     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
+//     [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, ],
+//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+//     [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, ],
+// ];
 
-console.log(unique_paths_with_obstacles(solution_array));
+
+const unique_paths_i = (arr) => {
+  return unique_paths_with_obstacles(new Array(arr[0]).fill(new Array(arr[1]).fill(0)));
+};
+
+// Unique Paths in a Grid I
+// You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
+
+
+// You are in a grid with 13 rows and 12 columns, and you are positioned in the top-left corner of that grid. You are trying to reach the bottom-right 
+//corner of the grid, but you can only move down or right on each step. Determine how many unique paths there are from start to finish.
+
+// NOTE: The data returned for this contract is an array with the number of rows and columns:
+
+// [13, 12]
+
+console.log(unique_paths_i([13,12]));
+

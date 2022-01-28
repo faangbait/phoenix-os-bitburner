@@ -53,8 +53,14 @@ export const alpha = async (ns, player, servers) => {
 		} catch (e) {}
 
         try {
-			for (let s of servers.filter(s => s.admin && !s.backdoored && s.level <= player.level)) {
-                getAllServers(ns, s.id, true);
+            let factions = ["CSEC", "avmnite-02h", "I.I.I.I", "run4theh111z"];       
+			for (let s of servers.filter(s => factions.includes(s.hostname) && s.admin && !s.backdoored && s.level <= player.level)) {
+                let route = getAllServers(ns, s.id, true);
+                let first_stop = route.shift(); //pop home off
+                if (first_stop != "home") {
+                    route.unshift(first_stop);
+                }
+
                 for (let link of route) {
                     ns.connect(link);
                 }

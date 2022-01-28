@@ -11,53 +11,53 @@ export class Faction {
 
 export const joinFactions = async (ns, player, faction=null) => {
 
-    // let faction_graph = new Map();
+    let faction_graph = new Map();
     
-    // faction_graph.set("Sector-12", ["Chongqing", "New Tokyo", "Ishima", "Volhaven"]);
-    // faction_graph.set("Chongqing", ["Sector-12", "Aevum", "Volhaven"]);
-    // faction_graph.set("New Tokyo", ["Sector-12", "Aevum", "Volhaven"]);
-    // faction_graph.set("Ishima", ["Sector-12", "Aevum", "Volhaven"]);
-    // faction_graph.set("Aevum", ["Chongqing", "New Tokyo", "Ishima", "Volhaven"]);
-    // faction_graph.set("Volhaven", ["Chongqing", "New Tokyo", "Ishima", "Sector-12", "Aevum"]);
-    // faction_graph.set("NiteSec", []);
-    // faction_graph.set("CyberSec", []);
-    // faction_graph.set("Tian Di Hui", []);
-    // faction_graph.set("BitRunners", []);
-    // faction_graph.set("ECorp", []);
-    // faction_graph.set("The Black Hand", []);
-    // faction_graph.set("KuaiGong International", []);
-    // faction_graph.set("MegaCorp", []);
-    // faction_graph.set("NWO", []);
-    // faction_graph.set("Four Sigma", []);
-    // faction_graph.set("OmniTek Incorporated", []);
-    // faction_graph.set("Blade Industries", []);
-    // faction_graph.set("Clarke Incorporated", []);
-    // faction_graph.set("Bachman & Associates", []);
-    // faction_graph.set("Slum Snakes", []);
-    // faction_graph.set("Fulcrum Secret Technologies", []);
-    // faction_graph.set("Silhouette", []);
-    // faction_graph.set("Tetrads", []);
-    // faction_graph.set("The Dark Army", []);
-    // faction_graph.set("Speakers for the Dead", []);
-    // faction_graph.set("The Covenant", []);
-    // faction_graph.set("The Syndicate", []);
-    // faction_graph.set("Illuminati", []);
-    // faction_graph.set("Daedalus", []);
+    faction_graph.set("Sector-12", ["Chongqing", "New Tokyo", "Ishima", "Volhaven"]);
+    faction_graph.set("Chongqing", ["Sector-12", "Aevum", "Volhaven"]);
+    faction_graph.set("New Tokyo", ["Sector-12", "Aevum", "Volhaven"]);
+    faction_graph.set("Ishima", ["Sector-12", "Aevum", "Volhaven"]);
+    faction_graph.set("Aevum", ["Chongqing", "New Tokyo", "Ishima", "Volhaven"]);
+    faction_graph.set("Volhaven", ["Chongqing", "New Tokyo", "Ishima", "Sector-12", "Aevum"]);
+    faction_graph.set("NiteSec", []);
+    faction_graph.set("CyberSec", []);
+    faction_graph.set("Tian Di Hui", []);
+    faction_graph.set("BitRunners", []);
+    faction_graph.set("ECorp", []);
+    faction_graph.set("The Black Hand", []);
+    faction_graph.set("KuaiGong International", []);
+    faction_graph.set("MegaCorp", []);
+    faction_graph.set("NWO", []);
+    faction_graph.set("Four Sigma", []);
+    faction_graph.set("OmniTek Incorporated", []);
+    faction_graph.set("Blade Industries", []);
+    faction_graph.set("Clarke Incorporated", []);
+    faction_graph.set("Bachman & Associates", []);
+    faction_graph.set("Slum Snakes", []);
+    faction_graph.set("Fulcrum Secret Technologies", []);
+    faction_graph.set("Silhouette", []);
+    faction_graph.set("Tetrads", []);
+    faction_graph.set("The Dark Army", []);
+    faction_graph.set("Speakers for the Dead", []);
+    faction_graph.set("The Covenant", []);
+    faction_graph.set("The Syndicate", []);
+    faction_graph.set("Illuminati", []);
+    faction_graph.set("Daedalus", []);
     
-    // if (typeof faction !== "string") {
-    //     for (let [name, blockers] of faction_graph) {
-    //         if (!blockers.length) {
-    //             try {
-    //                 ns.joinFaction(name);
-    //             } catch (e) {}
-    //         } else {
-    //             //logic needed
-    //         }
-    //     }
-    // } else {
-    //     // faction name was specified
-    //     ns.joinFaction(faction);
-    // }
+    if (!faction_graph.has(faction)) {
+        for (let [name, blockers] of faction_graph) {
+            if (!blockers.length) {
+                try {
+                    ns.joinFaction(name);
+                } catch (e) {}
+            } else {
+                //logic needed
+            }
+        }
+    } else {
+        // faction name was specified
+        ns.joinFaction(faction);
+    }
     
 };
 

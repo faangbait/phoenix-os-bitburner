@@ -7,7 +7,7 @@
  * @param {number[][]} matrix
  * @return {number[]} 
  */
-const spiralize_matrix = (matrix) => {
+export const spiralize_matrix = (matrix) => {
 	var result = [];
 	while (matrix.length > 0) {
 		result.push(...matrix.shift());
@@ -31,7 +31,7 @@ const spiralize_matrix = (matrix) => {
  * @param {number} K
  * @return {number} 
  */
-function twts(N, K)
+export function twts(N, K)
 {   
     let dp = Array.from({length: N +1}, (_, i) => 0);
     dp[0] = 1;
@@ -55,7 +55,7 @@ function twts(N, K)
  * @param {Number[]} inputArray
  * @return {Number[]}
  */
- function dpMaximumSubarray(inputArray) {
+ export function dpMaximumSubarray(inputArray) {
 	let maxSum = -Infinity;
 	let currentSum = 0;
 	let maxStartIndex = 0;
@@ -88,7 +88,7 @@ function twts(N, K)
  * @param {number[]} array
  * @return {number} 
  */
-const find_best_single_trade = (array) => {
+export const find_best_single_trade = (array) => {
 	let best_single_trade = 0;
 	let idx = 0;
 	for (let cur of array) {
@@ -108,7 +108,7 @@ const find_best_single_trade = (array) => {
  * @param {number[]} array
  * @return {number} 
  */
-const find_cumulative_profit = (array) => {
+export const find_cumulative_profit = (array) => {
     return array.reduce(function (accumulator, current, idx, arr) {
         if (arr[idx+1] > current){
             // console.log("Index ", idx, " profit ", (arr[idx+1]-current), " cumulatively ", accumulator);
@@ -124,7 +124,7 @@ const find_cumulative_profit = (array) => {
  * @param {number[]} arr
  * @return {number} 
  */
-const unique_paths_with_obstacles = (arr) => {
+export const unique_paths_with_obstacles = (arr) => {
 	let r = arr.length,
 		c = arr[0].length;
 
@@ -174,13 +174,18 @@ const unique_paths_with_obstacles = (arr) => {
     return paths[r - 1][paths[r - 1].length - 1];
 };
 
+
+export const unique_paths_i = (arr) => {
+    return unique_paths_with_obstacles(new Array(arr[0]).fill(new Array(arr[1]).fill(0)));
+  };
+
 /**
  * Find Largest Prime Factor
  *
  * @param {number} target
  * @return {number} 
  */
-const find_largest_prime_factor = (target) => {
+export const find_largest_prime_factor = (target) => {
     var x = 2;
     while (x <= target) {
         if (target % x == 0) {
@@ -194,12 +199,12 @@ const find_largest_prime_factor = (target) => {
 
 
 // utility
-function range(size, startAt = 0) {
+export function range(size, startAt = 0) {
     return [...Array(size).keys()].map(i => i + startAt);
 }
 
 // generate array jumping game graph
-const array_jumping_generate_graph = (solution_array) => {
+export const array_jumping_generate_graph = (solution_array) => {
     let graph = new Map();
     for (let i = 0; i < solution_array.length; i++) {
         graph.set(i, range(solution_array[i], i+1)
@@ -209,7 +214,7 @@ const array_jumping_generate_graph = (solution_array) => {
 };
 
 // traverse array jumping game graph
-const array_jumping_traverse_graph = (graph, source) => {
+export const array_jumping_traverse_graph = (graph, source) => {
     const stack = [ source ];
     const result = [];
     const visited = {};
@@ -242,7 +247,7 @@ const array_jumping_traverse_graph = (graph, source) => {
  * @param {number[]} solution_array
  * @return {boolean} 
  */
-const array_jumping_can_win = (solution_array) => {
+export const array_jumping_can_win = (solution_array) => {
     let graph = array_jumping_generate_graph(solution_array);
     return array_jumping_traverse_graph(graph, 0);
 };
@@ -254,7 +259,7 @@ const array_jumping_can_win = (solution_array) => {
  * @param {number[]} arr
  * @return {number} 
  */
-function minSumPath(arr) {
+export function minSumPath(arr) {
 
 	// For storing the result
 	// in a 1-D array, and
@@ -282,7 +287,7 @@ function minSumPath(arr) {
 }
 
 
-const attemptContract = (name, type, data, server) => {
+export const attemptContract = (name, type, data, server) => {
 
     var answer;
 
@@ -298,6 +303,9 @@ const attemptContract = (name, type, data, server) => {
             break;
         case "Algorithmic Stock Trader II":
             answer = find_cumulative_profit(data);
+            break;
+        case "Unique Paths in a Grid I":
+            answer = unique_paths_i(data);
             break;
         case "Unique Paths in a Grid II":
             answer = unique_paths_with_obstacles(data);

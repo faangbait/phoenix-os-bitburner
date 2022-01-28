@@ -146,13 +146,9 @@ export class gsNewGame extends DefaultGameStage {
 
         while (servers.filter(s => s.admin).length < 3) {
             ns.exec("sbin.sudo.js", "home", 1, "n00dles");
-            await ns.sleep(150);
+            await ns.sleep(250);
             ns.exec("sbin.sudo.js", "home", 1, "foodnstuff");
             await ns.sleep(800);
-            ns.exec("sbin.scp.js", "home", 1, "n00dles", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-            await ns.sleep(150);
-            ns.exec("sbin.scp.js", "home", 1, "foodnstuff", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-            await ns.sleep(150);
         }
 
         ns.exec("bin.gr.loop.js", "n00dles", 1, "foodnstuff");
@@ -174,8 +170,6 @@ export class gsNewGame extends DefaultGameStage {
             await ns.sleep(400);
         }
         
-        ns.exec("sbin.scp.js", "home", 1, "sigma-cosmetics", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-        await ns.sleep(800);
         ns.exec("bin.wk.loop.js", "sigma-cosmetics", 1, "foodnstuff");
         ns.exec("bin.gr.loop.js", "sigma-cosmetics", 8, "foodnstuff");
 
@@ -189,7 +183,6 @@ export class gsNewGame extends DefaultGameStage {
             ns.exec("sbin.sudo.js", "home", 1, "joesguns");
             await ns.sleep(400);
         }
-        ns.exec("sbin.scp.js", "home", 1, "joesguns", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
         await ns.sleep(400);
         ns.exec("bin.wk.loop.js", "joesguns", 1, "foodnstuff");
         ns.exec("bin.gr.loop.js", "joesguns", 8, "foodnstuff");
@@ -203,8 +196,6 @@ export class gsNewGame extends DefaultGameStage {
             ns.exec("sbin.sudo.js", "home", 1, "nectar-net");
             await ns.sleep(400);
         }
-        ns.exec("sbin.scp.js", "home", 1, "nectar-net", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-        await ns.sleep(400);
 
         ns.exec("bin.wk.loop.js", "nectar-net", 1, "foodnstuff");
         ns.exec("bin.gr.loop.js", "nectar-net", 8, "foodnstuff");
@@ -219,8 +210,6 @@ export class gsNewGame extends DefaultGameStage {
             ns.exec("sbin.sudo.js", "home", 1, "hong-fang-tea");
             await ns.sleep(400);
         }
-        ns.exec("sbin.scp.js", "home", 1, "hong-fang-tea", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-        await ns.sleep(400);
     
         ns.exec("bin.wk.loop.js", "hong-fang-tea", 1, "foodnstuff");
         await ns.sleep(100);
@@ -238,8 +227,6 @@ export class gsNewGame extends DefaultGameStage {
             await ns.sleep(400);
         }
 
-        ns.exec("sbin.scp.js", "home", 1, "harakiri-sushi", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-        await ns.sleep(400);
         ns.exec("bin.wk.loop.js", "harakiri-sushi", 1, "foodnstuff");
         await ns.sleep(100);
         ns.exec("bin.gr.loop.js", "harakiri-sushi", 8, "foodnstuff");
@@ -258,9 +245,6 @@ export class gsNewGame extends DefaultGameStage {
             await ns.sleep(400);
         }
 
-        
-        ns.exec("sbin.scp.js", "home", 1, "neo-net", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-        await ns.sleep(400);
         ns.exec("bin.wk.loop.js", "neo-net", 2, "foodnstuff");
         await ns.sleep(100);
         ns.exec("bin.gr.loop.js", "neo-net", 16, "foodnstuff");
@@ -278,8 +262,6 @@ export class gsNewGame extends DefaultGameStage {
             await ns.sleep(400);
         }
 
-        ns.exec("sbin.scp.js", "home", 1, "CSEC", "bin.hk.loop.js", "bin.wk.loop.js", "bin.gr.loop.js");
-        await ns.sleep(400);
   
         ns.exec("bin.wk.loop.js", "CSEC", 4, "foodnstuff");
         await ns.sleep(100);
@@ -303,12 +285,14 @@ export class gsNewGame extends DefaultGameStage {
         }
 
         await ns.sleep(1000);
+
         if (ns.ps("home").every(process => process.filename != "sbin.hnet.js")) {
-            let hnet_pid = ns.exec("sbin.hnet.js", "home");
+             let hnet_pid = ns.exec("sbin.hnet.js", "home");
+             await ns.sleep(5000);
+             ns.kill(hnet_pid);
         }
         
-        await ns.sleep(5000);
-        ns.kill(hnet_pid);
+
         return {player,servers};
     }
 
