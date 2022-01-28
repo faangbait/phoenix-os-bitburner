@@ -52,7 +52,7 @@ export async function main(ns) {
     ns.tprint("Phoenix OS kernel v1.0.0 has been loaded into ", ns.getHostname());
     ns.tprint("You can start Phoenix by running phoenix.js or sbin.keepalive.js");
     if (await ns.prompt("Phoenix OS has been installed. Would you like to launch now?")) {
-        ns.tprint("Starting Phoenix in 10s...")
+        ns.tprint("Starting Phoenix in 10s...");
         ns.spawn('phoenix.js');
     }
 }
