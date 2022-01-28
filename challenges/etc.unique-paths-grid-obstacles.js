@@ -72,7 +72,7 @@ const unique_paths_with_obstacles = (arr) => {
   
     // Returning the corner value
     // of the matrix
-    return paths[r - 1];
+    return paths[r - 1][paths[r - 1].length - 1];
 };
 
 var solution_array = [
@@ -83,4 +83,4 @@ var solution_array = [
     [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, ],
 ];
 
-console.log(unique_paths_with_obstacles(solution_array)[unique_paths_with_obstacles(solution_array).length-1]);
+console.log(unique_paths_with_obstacles(solution_array));

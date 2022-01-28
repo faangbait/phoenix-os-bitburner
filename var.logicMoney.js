@@ -24,8 +24,8 @@ export function determineResourceAllocation(servers, player) {
             {
                 cls: gs.msHnet,
                 compareFns: [
-                    (player.hacking.level < (100 * (1 / player.hnet.multipliers.purchaseCost))),
-                    (player.playtime.sinceAug < 4 * 60 * 1000)
+                    (player.hacking.level < (15 * (1 / player.hnet.multipliers.purchaseCost))),
+                    (player.playtime.sinceAug < 2 * 60 * 1000)
                 ]
             },
             {

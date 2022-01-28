@@ -6,12 +6,12 @@
 export async function main(ns) {
     var count = 0;
     while (true) {
+        await ns.sleep(60000);
 
         if (count > 120) {
             ns.tprint("scheduled reboot");
             ns.ps("home").filter(process => process.filename != "sbin.keepalive.js").forEach(process => ns.kill(process.pid));
             ns.run("phoenix.js");
-            ns.run("etc.singularity.js");
             
             count = 0;
         }
@@ -21,10 +21,6 @@ export async function main(ns) {
             ns.print("phoenix not found");
         }
 
-        if (ns.ps("home").filter(process => process.filename == "etc.singularity.js").length != 1) {
-            ns.run("etc.singularity.js");
-            ns.print("singularity not found");
-        }
 
         try {
             let heartbeat = ns.peek(20);
@@ -40,10 +36,8 @@ export async function main(ns) {
 
             ns.ps("home").filter(process => process.filename != "sbin.keepalive.js").forEach(process => ns.kill(process.pid));
             ns.run("phoenix.js");
-            ns.run("etc.singularity.js");
             
         }
-        await ns.sleep(60000);
         count++;
 
     }

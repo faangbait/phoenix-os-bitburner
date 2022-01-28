@@ -7,8 +7,8 @@
 
  import * as motd from "./etc.motd";
  import updateData, { firstLoad } from "./lib.loader.so";
- import { loop_time } from "./var.constants";
  import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.utils.so";
+ import { alpha, omega } from "./lib.singularity.so";
  
  /***************************************************************/
  /* I strongly suggest you move these files somewhere else.     */
@@ -31,13 +31,9 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
 
      // kill all non-phoenix files on boot
      servers.map(server => server.pids).flat()
-        .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js" && process.filename != "etc.singularity.js")
+        .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js")
         .forEach(process => ns.kill(process.pid));
     
-    // start additional scripts
-    //     if (singularity) {
-    //         ns.exec("etc.singularity.js", "home");
-    //     }
     
      while (true) {
          await heartbeat();
@@ -49,7 +45,7 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
 
         //dev
         // var gameStage = gs.gsdebugStage;
-
+         ({player, servers}    = await alpha                 (ns, player, servers));
          ({player, servers}    = await gameStage.untap       (ns, player, servers));
          ({player, servers}    = await moneyStage.upkeep     (ns, player, servers));
          ({player, servers}    = await gameStage.pre_hack    (ns, player, servers));
@@ -57,6 +53,7 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
          ({player, servers}          = gameStage.hack        (ns, player, servers));
          ({player, servers}    = await gameStage.post_hack   (ns, player, servers));
          ({player, servers}    = await moneyStage.end_step   (ns, player, servers));
+         ({player, servers}    = await omega                 (ns, player, servers));
 
          if (Math.random() < 0.05) {
              motd.banner_short(ns, start_time);

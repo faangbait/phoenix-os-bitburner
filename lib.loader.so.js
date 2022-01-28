@@ -23,6 +23,7 @@ export function firstLoad(ns) {
     };
 }
 
+
 /**
  * Handles merging, deduplication, and creation of objects on every update.
  * 
@@ -52,6 +53,40 @@ export function firstLoad(ns) {
         if (!server.admin && server.ports.required <= player.ports) {
             ns.tprint("Attempting sudo on ", server.id);
             server.sudo();
+        }
+    }
+    
+    Object.assign(player, new_player);
+
+    return {
+        servers,
+        player,
+    };
+}
+
+
+/**
+ * Handles merging, deduplication, and creation of objects on every update.
+ * 
+ * @export 
+ * @param {import(".").NS} ns
+ * @param {ServerObject[]} servers
+ * @param {PlayerObject} player
+ * @return 
+ * 
+ */
+ export function updateNoSudo(ns, servers, player) {
+
+    let serverList = getAllServers(ns);
+    let new_servers = serverList.map(s => serverFactory(s));
+    let new_player = playerFactory();
+
+    let serv_ids = [];
+    servers.forEach(s => serv_ids.push(s.id));
+
+    for (const server of new_servers) {
+        if (!serv_ids.includes(server.id)) {
+            servers.push(server);
         }
     }
     
