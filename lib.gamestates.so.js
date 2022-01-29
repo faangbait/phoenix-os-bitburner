@@ -175,7 +175,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 10) {
             await ns.sleep(foodnstuff.hackTime + 55);
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
 
@@ -189,7 +188,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 20) {
             await ns.sleep(foodnstuff.hackTime + 55);
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
         while (servers.filter(s => s.admin).length < 6) {
@@ -202,8 +200,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 30) {
             await ns.sleep(foodnstuff.hackTime + 55);
-
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
         while (servers.filter(s => s.admin).length < 7) {
@@ -218,8 +214,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 40) {
             await ns.sleep(foodnstuff.hackTime + 55);
-
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
         while (servers.filter(s => s.admin).length < 8) {
@@ -234,7 +228,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 50) {
             await ns.sleep(foodnstuff.hackTime + 55);
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
         while (servers.filter(s => s.admin).length < 9) {
@@ -252,8 +245,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 59) {
             await ns.sleep(foodnstuff.hackTime + 55);
-
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
 
@@ -268,8 +259,6 @@ export class gsNewGame extends DefaultGameStage {
 
         while (player.level < 75) {
             await ns.sleep(foodnstuff.hackTime + 55);
-
-            let curtime = new Date().valueOf();
             ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), "foodnstuff");
         }
         while (player.ports < 1) {
@@ -277,7 +266,6 @@ export class gsNewGame extends DefaultGameStage {
 
             for (let s of servers.filter(s => s.admin && s.money.available > 0))
             {
-                let curtime = new Date().valueOf();
                 ns.toast("Open a port to continue", "error", s.hackTime + 55);
                 ns.exec("bin.hk.once.js", "home", home.threadCount(1.7), s.hostname);
                 await ns.sleep(s.hackTime + 55);
@@ -329,16 +317,58 @@ export class gsEarlyGame extends DefaultGameStage {
 export class gsMidGame extends DefaultGameStage {
     constructor(){super();}
 
-    static pre_hack(ns, player, servers) {
-        let top_attackers = servers.filter(s => s.admin && s.ram.free >= 1024);
-        top_attackers.sort((a,b) => b.ram.max - a.ram.max);
-        let top_targets = servers.filter(s => s.admin && s.money.max > 0 && s.targeted_by.length == 0);
-        top_targets = top_targets.filter(s => s.money.max - s.money.available > 0 || s.security.level - s.security.min > 0);
-        top_targets.sort((a,b) => (a.security.level - a.security.min) - (b.security.level - b.security.min));
-        for (let i = 0; i < Math.min(top_targets.length, top_attackers.length); i++) {
-            ns.exec("/utils/deploy.js", "home", 1, top_attackers[i].hostname, "bin.prep.js", top_targets[i].hostname);
+    static async pre_hack(ns, player, servers) {
+        // let top_attackers = servers.filter(s => s.admin && s.ram.free >= 1024);
+        // top_attackers.sort((a,b) => b.ram.max - a.ram.max);
+        // let top_targets = servers.filter(s => s.admin && s.money.max > 0 && s.targeted_by.length == 0);
+        // top_targets = top_targets.filter(s => s.money.max - s.money.available > 0 || s.security.level - s.security.min > 0);
+        // top_targets.sort((a,b) => (a.security.level - a.security.min) - (b.security.level - b.security.min));
+        // for (let i = 0; i < Math.min(top_targets.length, top_attackers.length); i++) {
+        //     // ns.exec("/utils/deploy.js", "home", 1, top_attackers[i].hostname, "bin.prep.js", top_targets[i].hostname);
+        //     ns.exec("bin.scp.js", "home", 1, top_attackers[i].hostname, "bin.prep.js");
+        //     ns.exec("bin.prep.js",  top_attackers[i].hostname, top_attackers[i].threadCount(3.30), top_targets[i].hostname);
+        // }
+        // return { player, servers };
+
+        const filter_ready = (servers, player) => {
+            servers.sort((a, b) => a.level - b.level);
+            return servers.filter(function (s) {
+                return (s.admin) &&
+                    (!s.purchased) &&
+                    (s.money.max > 0) &&
+                    (s.money.available / s.money.max == 1) &&
+                    (s.level < player.level) &&
+                    (s.security.level - s.security.min == 0);
+            });
+        };
+        const filter_preptargets = (servers, player) => {
+            servers.sort((a, b) => a.level - b.level);
+            return servers.filter(function (s) {
+                return (s.admin) &&
+                    (!s.purchased) &&
+                    (s.money.max > 0) &&
+                    (s.money.max > s.money.available) &&
+                    (s.level < player.level) &&
+                    (s.security.level > s.security.min) &&
+                    (s.targeted_by.length == 0);
+            });
+        };
+
+        let prepared_targets = filter_ready(servers, player);
+    
+        let top_attackers = servers.filter(s => s.admin && s.ram.free >= 512);
+        top_attackers.sort((a, b) => b.ram.max - a.ram.max);
+
+        let next_targets = filter_preptargets(servers, player);
+        if (next_targets.length > 0 && top_attackers.length > 0) {
+            await ns.scp("bin.prep.js", "home", top_attackers[0].hostname);
+            ns.exec("bin.prep.js", top_attackers[0].hostname, top_attackers[0].threadCount(3.30, true), next_targets[0].hostname);
         }
-        return { player, servers };
+
+        ns.print("Preparing to ready ", next_targets[0].id);
+
+
+        return {player, servers};
     }
 
     static select_algorithm(ns, player, servers) {
@@ -384,17 +414,60 @@ export class gsEndGame extends DefaultGameStage {
 
 export class gsRepair extends DefaultGameStage {
     constructor(){super();}
-    static pre_hack(ns, player, servers) {
-        let top_attackers = servers.filter(s => s.admin && s.ram.free > 4);
-        let top_targets = servers.filter(s => s.admin && s.money.max > 0 && s.targeted_by.length == 0);
-        top_targets = top_targets.filter(s => s.money.max - s.money.available > 0 || s.security.level - s.security.min > 0);
+    static async pre_hack(ns, player, servers) {
+        // let top_attackers = servers.filter(s => s.admin && s.ram.free > 4);
+        // let top_targets = servers.filter(s => s.admin && s.money.max > 0 && s.targeted_by.length == 0);
+        // top_targets = top_targets.filter(s => s.money.max - s.money.available > 0 || s.security.level - s.security.min > 0);
         
-        top_targets.sort((a,b) => (a.security.level - a.security.min) - (b.security.level - b.security.min));
-        top_attackers.sort((a,b) => b.ram.free - a.ram.free);
-        for (let i = 0; i < Math.min(top_targets.length, top_attackers.length); i++) {
-            ns.exec("/utils/deploy.js", "home", 1, top_attackers[i].hostname, "bin.prep.js", top_targets[i].hostname);
+        // top_targets.sort((a,b) => (a.security.level - a.security.min) - (b.security.level - b.security.min));
+        // top_attackers.sort((a,b) => b.ram.free - a.ram.free);
+        // for (let i = 0; i < Math.min(top_targets.length, top_attackers.length); i++) {
+        // //     ns.exec("/utils/deploy.js", "home", 1, top_attackers[i].hostname, "bin.prep.js", top_targets[i].hostname);
+        //     ns.exec("sbin.scp.js", "home", 1, top_attackers[i].hostname, "bin.prep.js");
+        //     ns.exec("bin.prep.js",  top_attackers[i].hostname, top_attackers[i].threadCount(3.30), top_targets[i].hostname);
+        // }
+        
+        // return { player, servers };
+
+        const filter_ready = (servers, player) => {
+            servers.sort((a, b) => a.level - b.level);
+            return servers.filter(function (s) {
+                return (s.admin) &&
+                    (!s.purchased) &&
+                    (s.money.max > 0) &&
+                    (s.money.available / s.money.max == 1) &&
+                    (s.level < player.level) &&
+                    (s.security.level - s.security.min == 0);
+            });
+        };
+        const filter_preptargets = (servers, player) => {
+            servers.sort((a, b) => a.level - b.level);
+            return servers.filter(function (s) {
+                return (s.admin) &&
+                    (!s.purchased) &&
+                    (s.money.max > 0) &&
+                    (s.money.max > s.money.available) &&
+                    (s.level < player.level) &&
+                    (s.security.level > s.security.min) &&
+                    (s.targeted_by.length == 0);
+            });
+        };
+
+        let prepared_targets = filter_ready(servers, player);
+    
+        let top_attackers = servers.filter(s => s.admin && s.ram.free >= 512);
+        top_attackers.sort((a, b) => b.ram.max - a.ram.max);
+
+        let next_targets = filter_preptargets(servers, player);
+        if (next_targets.length > 0 && top_attackers.length > 0) {
+            await ns.scp("bin.prep.js", "home", top_attackers[0].hostname);
+            ns.exec("bin.prep.js", top_attackers[0].hostname, top_attackers[0].threadCount(3.30, true), next_targets[0].hostname);
         }
-        return { player, servers };
+
+        ns.print("Preparing to ready ", next_targets[0].id);
+
+
+        return {player, servers};
     }
 
     static select_algorithm(ns, player, servers) {
