@@ -1,6 +1,7 @@
 import { autoSolve } from "./sing.codingcontracts";
 import * as factions from "./var.logicFactions";
 import { getAllServers } from "./lib.serverextras.so";
+import { get_distance_to_next_augment } from "./lib.augmentations.so";
 
 /**
  * @typedef {import(".").NS} ns
@@ -93,6 +94,9 @@ export const alpha = async (ns, player, servers) => {
  * @param {ServerObject[]} servers 
  */
 export const omega = async (ns, player, servers) => {
+
+	distance = get_distance_to_next_augment(ns, player, servers);
+
     return { player, servers };  
 };
 
