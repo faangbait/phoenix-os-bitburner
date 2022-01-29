@@ -10,38 +10,43 @@
  import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.utils.so";
  import { alpha, omega } from "./lib.singularity.so";
  
- /***************************************************************/
- /* I strongly suggest you move these files somewhere else.     */
- /* You'll probably want to update this software in the future  */
- /* without losing all your customizations.                     */
+/***************************************************************/
+/* I strongly suggest you move these files somewhere else.     */
+/* You'll probably want to update this software in the future  */
+/* without losing all your customizations.                     */
 
- import { determineResourceAllocation } from "./var.logicMoney";
- import { determineGameStage } from "./var.logicHacking";
+import { determineResourceAllocation } from "./var.logicMoney";
+import { determineGameStage } from "./var.logicHacking";
 
-
- /***************************************************************/
+/***************************************************************/
  
-const singularity = true; // source file 4, not in default, see "sf4" branch on github.
+const singularity = false; // source file 4, not in default, see "sf4" branch on github.
 
 export async function main(ns){
-     globalThis.ns = ns;
-     motd.banner(ns);
-     let start_time = new Date();
-     let {servers, player} = firstLoad(ns);
+    globalThis.ns = ns;
+    motd.banner(ns);
+    let start_time = new Date();
+    let {servers, player} = firstLoad(ns);
 
-     // kill all non-phoenix files on boot
-     servers.map(server => server.pids).flat()
-        .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js")
-        .forEach(process => ns.kill(process.pid));
+    // kill all non-phoenix files on boot
+    servers.map(server => server.pids).flat()
+       .filter(process => process.filename != "phoenix.js" && process.filename != "sbin.keepalive.js")
+       .forEach(process => ns.kill(process.pid));
     
     
-     while (true) {
-         await heartbeat();
-         ({servers, player} = updateData(ns, servers, player));
+    while (true) {
+        if (servers.some(s => s.hostname == "home" && s.ram.trueMax >= 32)) {
+           await heartbeat();
+        } else {
+            ns.print("Not enough RAM to start keepalive daemon on home.");
+        }
+            
+
+        ({servers, player} = updateData(ns, servers, player));
  
 
-        var gameStage = determineGameStage(servers, player);
-        var moneyStage = determineResourceAllocation(servers, player);
+       var gameStage = determineGameStage(servers, player);
+       var moneyStage = determineResourceAllocation(servers, player);
 
          ({player, servers}    = await alpha                 (ns, player, servers));
          ({player, servers}    = await gameStage.untap       (ns, player, servers));
@@ -55,22 +60,22 @@ export async function main(ns){
          
         //  ns.tprint("Main loop performance timing ", perform_end - perform_start);
 
-         if (Math.random() < 0.05) {
-             motd.banner_short(ns, start_time);
-         }
+        if (Math.random() < 0.05) {
+            motd.banner_short(ns, start_time);
+        }
 
-         display_deltas(ns, player, servers, gameStage, moneyStage);
-         display_notices(ns, player, servers, gameStage, moneyStage);
-     }
+        display_deltas(ns, player, servers, gameStage, moneyStage);
+        display_notices(ns, player, servers, gameStage, moneyStage);
+    }
 
- }
+}
 
- /**
-  * Displays info at the bottom of terminal
-  *
-  * @param {PlayerObject} player
-  */
- function display_deltas(ns, player, servers, gameStage, moneyStage) {
+/**
+ * Displays info at the bottom of terminal
+ *
+ * @param {PlayerObject} player
+ */
+function display_deltas(ns, player, servers, gameStage, moneyStage) {
     ns.tprint(new Date().toLocaleTimeString(), "  Game Stage: ", new gameStage().constructor.name, "    Resource allocation: ", new moneyStage().constructor.name);
     
     if (Math.random() < 0.1) {
@@ -83,12 +88,11 @@ export async function main(ns){
 
         player.last_money = player.money;
         player.last_xp = player.hacking.exp;
-   }
+    }
+}
 
- }
-
- function display_notices(ns, player, servers, gameStage, moneyStage) {
-     //check for faction backdoor
+function display_notices(ns, player, servers, gameStage, moneyStage) {
+    //check for faction backdoor
 
     let factions = ["CSEC", "avmnite-02h", "I.I.I.I", "run4theh111z"];
     servers.filter(server => factions.includes(server.hostname) && server.admin && !server.backdoored && player.level >= server.level)
