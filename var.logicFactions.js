@@ -2,7 +2,7 @@
  * @typedef {(*.*).NS} ns
  */
 
-import { desired_augmentations, find_best_aug } from "./lib.augmentations.so";
+import { desired_augmentations, find_best_aug, prioritize_augmentations } from "./lib.augmentations.so";
 import { PriorityQueue } from "./lib.structures.so";
 import factionFactory from "./lib.factions.so";
 
@@ -66,6 +66,7 @@ export const joinFactions = async (ns, player, faction=null) => {
  */
 export const selectFocusActivity = async (ns, player) => {
     let pqueue = new PriorityQueue();
+    const pq = prioritize_augmentations(ns,player);
 
     const priority_stat = "hacking_mult";
 
@@ -78,28 +79,71 @@ export const selectFocusActivity = async (ns, player) => {
             ns.tprint("Stopping work for ", faction.name, "as we need none of their augments");
         }
     } else {
-        for (let faction_name of player.faction.membership) {
-            let faction = factionFactory(faction_name);
-            if (faction.unowned_augs.size > 0) {
-                for (let aug of faction.unowned_augs.keys()) {
-                    ns.tprint(faction.name,", ",faction.unowned_augs.size, ", ", desired_augmentations(player, priority_stat));
-                    if (desired_augmentations(player, priority_stat).has(aug)) {
-                        pqueue.add(faction, faction.unowned_augs.size);
-                    }
-                }
+        let next_priority = pq.poll();
+        // todo: consider whether it prioritizes a stat we want
+        let next_faction;
+        while (next_priority && !next_faction) {
+            for (let faction_name of player.faction.membership) {
+                let faction = factionFactory(faction_name);
+                if (faction.unowned_augs.has(next_priority)) {
+                    next_faction = faction;
+                    break;
+                } 
             }
+            next_priority = pq.poll();
         }
-        ns.tprint("Starting work for ", pqueue.peek());
-    }
+
+        if (next_faction) {
+            ns.tprint("Starting work for ", next_faction.name, " in pursuit of ", next_priority);
+            ns.workForFaction(next_faction.name, "Hacking Contracts", false);
+        }  
 
 
-    let next_faction = pqueue.poll();
 
-    if (next_faction) {
-        ns.workForFaction(next_faction.name, "Hacking Contracts", false);
-    }
-    return player;
-};
+
+
+
+
+
+
+
+
+
+    //     for (let faction_name of player.faction.membership) {
+    //         let faction = factionFactory(faction_name);
+    //         if (faction.unowned_augs.size > 0) {
+    //             let desired = desired_augmentations(player, priority_stat);
+    //             let next_priority = pq.poll();
+    //             while (next_priority && !faction.unowned_augs.has(next_priority)) {
+    //                 let next_priority = pq.poll();
+    //             }
+
+    //         }
+
+
+
+
+
+
+    //             for (let aug of faction.unowned_augs.keys()) {
+    //                 let desired = desired_augmentations(player, priority_stat);
+    //                 // ns.tprint(faction.name,", ",faction.unowned_augs.size, ", ", desired_augmentations(player, priority_stat));
+    //                 if (desired.has(aug)) {
+    //                     // pqueue.add(faction, [...faction.unowned_augs.values()].map(aug => aug.price).reduce((acc, cur) => acc - cur,0));
+    //                     pqueue.add(faction, desired.size);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     pqueue.priorities.forEach(p => ns.tprint(p));
+    //     ns.tprint("Starting work for ", pqueue.peek(), "priority: ",);
+    //     let next_faction = pqueue.poll();
+
+    //     if (next_faction) {
+    //         ns.workForFaction(next_faction.name, "Hacking Contracts", false);
+        }
+    
+    };
 
 
 /**
@@ -108,12 +152,12 @@ export const selectFocusActivity = async (ns, player) => {
  * @param {import("./phoenix-doc").PlayerObject} player 
  */
 export const buyBestAug = (ns, player) => {
-    for (let faction_name of player.faction.membership) {
-        let faction = factionFactory(faction_name);
-        let best_aug = find_best_aug(ns, player, faction);
-        if (best_aug) {
-            ns.tprint("aug buy target ", faction_name, " ", best_aug, " can buy? ", faction.can_purchase_aug(player, best_aug.name));
-        }
+    // for (let faction_name of player.faction.membership) {
+    //     let faction = factionFactory(faction_name);
+    //     let best_aug = find_best_aug(ns, player, faction);
+    //     if (best_aug) {
+    //         ns.tprint("aug buy target ", faction_name, " ", best_aug, " can buy? ", faction.can_purchase_aug(player, best_aug.name));
+    //     }
         
-    }
+    // }
 };

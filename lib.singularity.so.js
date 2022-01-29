@@ -25,7 +25,7 @@ export const alpha = async (ns, player, servers) => {
 		await factions.joinFactions(ns, player);
 
         // set best activity
-		player = await factions.selectFocusActivity(ns, player);
+		await factions.selectFocusActivity(ns, player);
 
         // buy an aug, if appropriate
         factions.buyBestAug(ns, player);

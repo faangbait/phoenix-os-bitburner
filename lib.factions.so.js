@@ -62,6 +62,16 @@
         return augmentation_graph;
     }
 
+    get_wanted_augs(priority_stat) {
+        wanted_augs = [];
+        for (let aug of this.unowned_augs.values()) {
+            if (aug.stats.hasOwnProperty(priority_stat)) {
+                wanted_augs.push(aug);
+            }
+        }
+        return wanted_augs;
+    }
+
     can_purchase_aug(player, aug_name) {
         if (this.unowned_augs.has(aug_name)) {
             let aug_info = this.unowned_augs.get(aug_name);
@@ -96,7 +106,6 @@
     }
 }
 
-
 /**
  * Returns a Faction instance given a name
  * 
@@ -106,3 +115,4 @@
 export default function factionFactory(faction_name) {
     return new Faction(globalThis.ns, faction_name);
 }
+

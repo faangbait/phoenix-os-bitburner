@@ -1,4 +1,5 @@
 import factionFactory, { Faction } from "./lib.factions.so";
+import { PriorityQueue } from "./lib.structures.so";
 
 export default function loadAugmentationData (ns, player) {
     /** @param {ns} ns **/
@@ -1645,7 +1646,6 @@ export const desired_augmentations = (player, priority_stat) => {
     if (desired_augs.size > 0) {
     } else {
         globalThis.ns.tprint("Couldn't find any augmentations with ", priority_stat);
-       
     }
     return desired_augs;
 };
@@ -1713,4 +1713,36 @@ export const find_best_aug = (ns, player, faction) => {
         return best_aug[0];
     }
     return ""
+};
+
+
+/**
+ * 
+ * @param {ns} ns 
+ * @param {import("./phoenix-doc").PlayerObject} player 
+ */
+export const prioritize_augmentations = (ns, player) => {
+    const pq = new PriorityQueue();
+
+    let augmentation_graph = new Map();
+
+    for (let faction_name of player.faction.membership) {
+        let faction = factionFactory(faction_name);
+        augmentation_graph = new Map([...faction.unowned_augs,...augmentation_graph]); // merge all factions' unowned
+    }
+
+    for (const [name, info] of augmentation_graph) {
+        // now we have to reduce the value of an augmentation to a 0-20 number...
+        // that determines in which order we want to pursue the augmentation...
+        // probably should do it logarithmically...
+        // probably add in faction favor and current cash per second as modifiers to these numbers
+        let priority = (Math.log(info.price) / Math.log(10)) + Math.log(info.repreq) / Math.log(4);
+        priority = Math.min(Math.ceil(priority), 20);
+
+        // this feels like a good formula, since we can do some math on the pq. for instance,
+        // it would make sense to consider [all] a factions' augmentations at the priority
+        // value of its [most expensive] aug, since getting there will get you all the lower ranked augs
+        pq.add(name, priority);
+    }
+    return pq;
 };
