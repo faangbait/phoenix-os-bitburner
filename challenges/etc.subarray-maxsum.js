@@ -57,3 +57,4 @@ var solution_array = [-10,9,9,4,8,2,7,-10,-5,-3,-2,-5,1,4,-2,10,-6,9,-4,7];
     return max.reduce((a,b) => a+b,0);
   }
 
+console.log(dpMaximumSubarray(solution_array));

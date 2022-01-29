@@ -95,8 +95,7 @@ export const alpha = async (ns, player, servers) => {
  */
 export const omega = async (ns, player, servers) => {
 
-	distance = get_distance_to_next_augment(ns, player, servers);
+	let distance = get_distance_to_next_augment(ns, player, servers);
 
     return { player, servers };  
 };
-

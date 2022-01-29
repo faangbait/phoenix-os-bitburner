@@ -295,8 +295,9 @@ export const attemptContract = (name, type, data, server) => {
         case "Spiralize Matrix": 
             answer = spiralize_matrix(data);
             break;
-        case "Subarray With Maximum Sum":
+        case "Subarray with Maximum Sum":
             answer = dpMaximumSubarray(data);
+            ns.tprint(answer);
             break;
         case "Algorithmic Stock Trader I":
             answer = find_best_single_trade(data);

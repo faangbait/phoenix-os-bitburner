@@ -1,5 +1,5 @@
 export const reservedHomeRam = 64;
-export const loop_time = 20000;
+export const loop_time = 3000;
 
 const HackSemaphores = {
 };

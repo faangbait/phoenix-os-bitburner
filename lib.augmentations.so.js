@@ -132,7 +132,52 @@ export const prioritize_augmentations = (ns, player) => {
     return pq;
 };
 
+/**
+ *
+ *
+ * @param {import("./phoenix-doc").PlayerObject[]} player_history
+ * @param {string} stat
+ * @return {*} 
+ */
+function history_mapreduce(player_history, stat) {
+    let deepsplit = stat.split(".");
 
-export function get_distance_to_next_augment(ns, player, server) {
-    return undefined;
+    if (player_history.length < 10) {
+        return 0;
+    }
+    
+    let change = player_history.map(function (h) {
+        for (let split of deepsplit) {
+            h = h[split];
+        }
+        return h;
+    });
+    
+
+    let rate_of_change = Math.exp(Math.log(change[9]/change[0])/9);
+    
+
+    return rate_of_change;
+}
+
+/**
+ * Calculates delta-T from historical values to get an exponential factor
+ *
+ * @export
+ * @param {ns} ns
+ * @param {import("./phoenix-doc").PlayerObject} player
+ * @param {import("./phoenix-doc").ServerObject[]} servers
+ * @return {*} 
+ */
+export function get_distance_to_next_augment(ns, player, servers) {
+    let distance = Number.MAX_SAFE_INTEGER;
+
+    let history = player.rate_of_change.player.slice(-10);
+    let money = history_mapreduce(history, "money");
+    let hacking_exp = history_mapreduce(history, "hacking.exp");
+    
+    ns.tprint("Money rate of change: ", money);
+    ns.tprint("XP rate of change: ", hacking_exp);
+    
+    return distance;
 }
