@@ -48,6 +48,8 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicMoney.js","var.logicMoney.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.aliases.txt","usr.aliases.txt");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.debug.txt","var.debug.txt");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/__uninstall.js","__uninstall.js");
+    
 
 
     ns.tprint("Phoenix OS kernel v1.0.0 has been loaded into ", ns.getHostname());
