@@ -54,8 +54,16 @@ export function firstLoad(ns) {
             server.sudo();
         }
     }
-
-    player.rate_of_change.player.push(new_player);
+    
+    player.rate_of_change.player.push({
+            
+        hacking: {
+            exp: new_player.hacking.exp
+        },
+        money: new_player.money
+        
+    });
+    
 
     return {
         servers,

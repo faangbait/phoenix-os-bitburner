@@ -222,34 +222,35 @@ export default class Default {
      * @memberof Default
      */
     iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids) {
-        var debug_mode = false;
+        var debug_mode = globalThis.ns.read("var.debug.txt");
         
-        if (ns.read("var.debug.txt")) {
+        if (debug_mode) {
+            globalThis.ns.print("");
+            globalThis.ns.print(debug_mode);
+            globalThis.ns.print("");
             debug_mode = true;
         }
 
-        // if (!debug_mode) {
-        //     let pt = new PrettyTable();
+        if (!debug_mode) {
+            let pt = new PrettyTable();
 
-        //     let headers = ["UNQUAL", "AVAIL", "FULL"];
+            let headers = ["UNQUAL", "AVAIL", "FULL"];
 
-        //     let rows = [];
-        //     let server_copy = Array.from([...servers.filter(s => s.admin && s.ram.max > 0)]);
+            let rows = [];
+            let server_copy = Array.from([...servers.filter(s => s.admin && s.ram.max > 0)]);
 
-        //     for (let i = 0; i < Math.min(25, server_copy.length); i++) {
-        //         rows.push([
-        //             server_copy.filter(s => s.ram.max < this.memory_req).map(s => s.id)[i] || "",
-        //             server_copy.filter(s => s.ram.free >= this.memory_req ).map(s => s.id)[i] || "",
-        //             server_copy.filter(s => s.ram.free < this.memory_req).map(s => s.id)[i] || "",
-        //         ]);
-        //     }
-        //     pt.create(headers, rows);
-        //     globalThis.ns.clearLog();
-        //     globalThis.ns.print("RAM UTILIZATION");
-        //     globalThis.ns.print(pt.print());
-        // } else {
-        //     ns.print("debug mode enabled");
-        // }
+            for (let i = 0; i < Math.min(25, server_copy.length); i++) {
+                rows.push([
+                    server_copy.filter(s => s.ram.max < this.memory_req).map(s => s.id)[i] || "",
+                    server_copy.filter(s => s.ram.free >= this.memory_req ).map(s => s.id)[i] || "",
+                    server_copy.filter(s => s.ram.free < this.memory_req).map(s => s.id)[i] || "",
+                ]);
+            }
+            pt.create(headers, rows);
+            globalThis.ns.clearLog();
+            globalThis.ns.print("RAM UTILIZATION");
+            globalThis.ns.print(pt.print());
+        } 
 
         return {servers, attackers, bootstrapped, targets, filtered, executions, pids};
     }

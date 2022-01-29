@@ -47,9 +47,7 @@ export async function main(ns){
         var gameStage = determineGameStage(servers, player);
         var moneyStage = determineResourceAllocation(servers, player);
 
-        //dev
-        // var gameStage = gs.gsdebugStage;
-
+         ({player, servers}    = await alpha                 (ns, player, servers));
          ({player, servers}    = await gameStage.untap       (ns, player, servers));
          ({player, servers}    = await moneyStage.upkeep     (ns, player, servers));
          ({player, servers}    = await gameStage.pre_hack    (ns, player, servers));
@@ -57,6 +55,9 @@ export async function main(ns){
          ({player, servers}          = gameStage.hack        (ns, player, servers));
          ({player, servers}    = await gameStage.post_hack   (ns, player, servers));
          ({player, servers}    = await moneyStage.end_step   (ns, player, servers));
+         ({player, servers}    = await omega                 (ns, player, servers));
+         
+         ns.tprint("Main loop performance timing ", perform_end - perform_start);
 
          if (Math.random() < 0.05) {
              motd.banner_short(ns, start_time);
