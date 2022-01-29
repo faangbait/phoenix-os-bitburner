@@ -53,7 +53,7 @@ export async function main(ns){
          ({player, servers}    = await moneyStage.end_step   (ns, player, servers));
          ({player, servers}    = await omega                 (ns, player, servers));
          
-         ns.tprint("Main loop performance timing ", perform_end - perform_start);
+        //  ns.tprint("Main loop performance timing ", perform_end - perform_start);
 
          if (Math.random() < 0.05) {
              motd.banner_short(ns, start_time);
