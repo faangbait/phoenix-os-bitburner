@@ -1,1 +1,2 @@
-on
+WARNING debug mode enabled
+WARNING delete var.debug.txt to disable debug mode

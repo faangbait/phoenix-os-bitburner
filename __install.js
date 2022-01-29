@@ -18,20 +18,19 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.delete_server.js","etc.delete_server.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.motd.js","etc.motd.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.purchase_server.js","etc.purchase_server.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.singularity.js","etc.singularity.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.x11.js","etc.x11.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.gamestates.so.js","lib.gamestates.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.loader.so.js","lib.loader.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.player.so.js","lib.player.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.server.so.js","lib.server.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.serverextras.so.js","lib.serverextras.so.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.utils.so.js","lib.utils.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.structures.so.js","lib.structures.so.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.utils.so.js","lib.utils.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/phoenix.js","phoenix.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.scp.js","sbin.scp.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.hnet.js","sbin.hnet.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.keepalive.js","sbin.keepalive.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.market.js","sbin.market.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.scp.js","sbin.scp.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.sudo.js","sbin.sudo.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/src.prettytable.js","src.prettytable.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.base.js","strategy.base.js");
@@ -40,13 +39,15 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.maxcash.js","strategy.maxcash.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.nohacks.js","strategy.nohacks.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.rep.js","strategy.rep.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.contracts.js","usr.contracts.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.fixcommonbugs.js","usr.fixcommonbugs.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.list.js","usr.list.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.route.js","usr.route.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.constants.js","var.constants.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicHacking.js","var.logicHacking.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicMoney.js","var.logicMoney.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/contracts.js","usr/contracts.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/list.js","usr/list.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/route.js","usr/route.js");
-    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr/aliases.txt","usr/aliases.txt");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.aliases.txt","usr.aliases.txt");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.debug.txt","var.debug.txt");
 
 
     ns.tprint("Phoenix OS kernel v1.0.0 has been loaded into ", ns.getHostname());
