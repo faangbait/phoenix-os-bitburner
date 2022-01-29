@@ -33,7 +33,7 @@ export function determineGameStage(servers, player) {
         {
             cls: gs.gsMidGame,
             compareFns: [
-                (servers.map(s => s.ram.max).reduce((a, b) => a + b, 0) > 10e7),
+                (servers.filter(s => s.admin).map(s => s.ram.max).reduce((a, b) => a + b, 0) > Math.pow(2,14)),
             ]
         },
         {

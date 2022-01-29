@@ -46,6 +46,12 @@ export const selectFocusActivity = async (ns, player) => {
             ns.tprint("Stopping work for ", faction.name, " as we need none of their augments");
             selectFocusActivity(ns, player);
         }
+
+        if (faction.wanted_augs.sort((a,b) => b.rep - a.rep)[0] < faction.rep) {
+            ns.stopAction();
+            ns.tprint("Stopping work for ", faction.name, " as we have enough rep for all the augments we want");
+            selectFocusActivity(ns, player);
+        }
     } else {
         let next_priority;
         let next_faction;
@@ -58,7 +64,7 @@ export const selectFocusActivity = async (ns, player) => {
             // ns.tprint(next_priority.factions_offering, " ", next_priority.name);
             for (let faction_name of player.faction.membership) {
                 let faction = factionFactory(faction_name); // heavy functions, but it's rare.
-                faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name));
+                faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name) && aug.rep > faction.rep);
                 if (faction.wanted_augs.includes(next_priority)) {
                     next_faction = faction;
                     ns.tprint("Starting work for ", next_faction.name, " in pursuit of ", next_priority);
@@ -79,46 +85,46 @@ export const selectFocusActivity = async (ns, player) => {
  * @param {import("./phoenix-doc").PlayerObject} player 
  */
 export const buyBestAug = (ns, player) => {
-    const pq = prioritize_augmentations(ns, player);
-    let next_priority = pq.poll();
-    // todo: consider whether it prioritizes a stat we want; 
-    // this literally just buys available augs from most to least expensive
-    let next_faction;
-    let can_buy = new Map();
+    // const pq = prioritize_augmentations(ns, player);
+    // let next_priority = pq.poll();
+    // // todo: consider whether it prioritizes a stat we want; 
+    // // this literally just buys available augs from most to least expensive
+    // let next_faction;
+    // let can_buy = new Map();
 
-    while (next_priority && !next_faction) {
-        // for (let faction_name of player.faction.membership) { 
-        // let faction = factionFactory(faction_name);
-        // now: only consider the faction we're currently working for
-        let faction = factionFactory(player.work.current.factionName);
-        faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name));
+    // while (next_priority && !next_faction) {
+    //     // for (let faction_name of player.faction.membership) { 
+    //     // let faction = factionFactory(faction_name);
+    //     // now: only consider the faction we're currently working for
+    //     let faction = factionFactory(player.work.current.factionName);
+    //     faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name));
 
-        if (faction.wanted_augs.includes(next_priority)) {
-            let considering = next_priority;
-            considering.faction = faction;
-            // ns.tprint("Considering whether we can purchase ", next_priority);
-            if (faction.can_purchase_aug(player, next_priority)) {
-                if (can_buy.has(next_priority.name)) { // i dunno, can prices vary?
-                    let existing = can_buy.get(next_priority);
-                    if (existing.price < considering.price) {
-                        can_buy.set(next_priority.name, considering);
-                    }
-                } else {
-                    can_buy.set(next_priority.name, considering);
-                }
-            }
-        } 
-        // }
-        next_priority = pq.poll();
-    }
+    //     if (faction.wanted_augs.includes(next_priority)) {
+    //         let considering = next_priority;
+    //         considering.faction = faction;
+    //         // ns.tprint("Considering whether we can purchase ", next_priority);
+    //         if (faction.can_purchase_aug(player, next_priority)) {
+    //             if (can_buy.has(next_priority.name)) { // i dunno, can prices vary?
+    //                 let existing = can_buy.get(next_priority);
+    //                 if (existing.price < considering.price) {
+    //                     can_buy.set(next_priority.name, considering);
+    //                 }
+    //             } else {
+    //                 can_buy.set(next_priority.name, considering);
+    //             }
+    //         }
+    //     } 
+    //     // }
+    //     next_priority = pq.poll();
+    // }
     
-    let can_buy_list = [...can_buy.values()];
-    while (can_buy_list.length > 0) {
-        can_buy_list.sort((a,b) => b.price - a.price);
-        let next_buy = can_buy_list.shift();
-        ns.tprint("Attempting purchase of next priority... ", next_buy.name, " from ", next_buy.faction.name);
-        next_buy.faction.purchase_aug(next_buy.name);
-        player.queued_augmentations.push(next_buy);
-    }
+    // let can_buy_list = [...can_buy.values()];
+    // while (can_buy_list.length > 0) {
+    //     can_buy_list.sort((a,b) => b.price - a.price);
+    //     let next_buy = can_buy_list.shift();
+    //     ns.tprint("Attempting purchase of next priority... ", next_buy.name, " from ", next_buy.faction.name);
+    //     next_buy.faction.purchase_aug(next_buy.name);
+    //     player.queued_augmentations.push(next_buy);
+    // }
     return player;
 };

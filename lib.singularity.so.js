@@ -1,7 +1,8 @@
+import { get_distance_to_next_augment } from "./lib.augmentations.so";
+import { getAllServers } from "./lib.serverextras.so";
 import { autoSolve } from "./sing.codingcontracts";
 import * as factions from "./var.logicFactions";
-import { getAllServers } from "./lib.serverextras.so";
-import { get_distance_to_next_augment } from "./lib.augmentations.so";
+import { loop_time } from "./var.constants";
 
 /**
  * @typedef {import(".").NS} ns
@@ -18,7 +19,7 @@ import { get_distance_to_next_augment } from "./lib.augmentations.so";
  * @param {ServerObject[]} servers 
  */
 export const alpha = async (ns, player, servers) => {
-	let start_time = performance.now();
+	// let start_time = performance.now();
 	//solve coding contracts
 	autoSolve(ns, servers.map(s => s.id)); // note, this + the import is 20gb of ram alone.
 
@@ -53,8 +54,8 @@ export const alpha = async (ns, player, servers) => {
 	}
 
 
-	let end_time = performance.now();
-	ns.tprint("Singularity performance timing ", end_time-start_time);
+	// let end_time = performance.now();
+	// ns.tprint("Singularity performance timing ", end_time-start_time);
 
 	/*****************
 	Upgrade home
@@ -95,7 +96,11 @@ export const alpha = async (ns, player, servers) => {
  */
 export const omega = async (ns, player, servers) => {
 
-	let distance = get_distance_to_next_augment(ns, player, servers);
+	let distance = get_distance_to_next_augment(ns, player, servers); // exponential rate of change per tick
+
+
+	
+
 
     return { player, servers };  
 };
