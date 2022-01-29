@@ -33,7 +33,6 @@ export function determineGameStage(servers, player) {
         {
             cls: gs.gsMidGame,
             compareFns: [
-                (player.faction.membership.includes("BitRunners")),
                 (servers.map(s => s.ram.max).reduce((a, b) => a + b, 0) > 10e7),
             ]
         },

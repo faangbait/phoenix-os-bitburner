@@ -45,6 +45,8 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
 
         //dev
         // var gameStage = gs.gsdebugStage;
+        let perform_start = performance.now();
+
          ({player, servers}    = await alpha                 (ns, player, servers));
          ({player, servers}    = await gameStage.untap       (ns, player, servers));
          ({player, servers}    = await moneyStage.upkeep     (ns, player, servers));
@@ -54,6 +56,9 @@ const singularity = true; // source file 4, not in default, see "sf4" branch on 
          ({player, servers}    = await gameStage.post_hack   (ns, player, servers));
          ({player, servers}    = await moneyStage.end_step   (ns, player, servers));
          ({player, servers}    = await omega                 (ns, player, servers));
+         
+         let perform_end = performance.now();
+         ns.tprint("Main loop performance timing ", perform_end - perform_start);
 
          if (Math.random() < 0.05) {
              motd.banner_short(ns, start_time);

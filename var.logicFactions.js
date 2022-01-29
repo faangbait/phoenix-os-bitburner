@@ -34,7 +34,6 @@ export const joinFactions = async (ns, player, faction=null) => {
  * @param {import("./phoenix-doc").PlayerObject} player 
  */
 export const selectFocusActivity = async (ns, player) => {
-    let start_time = performance.now();
     const pq = prioritize_augmentations(ns, player);
 
     if (player.work.isWorking) {
@@ -72,9 +71,6 @@ export const selectFocusActivity = async (ns, player) => {
             ns.workForFaction(next_faction.name, "Hacking Contracts", false);
         }
     }
-
-    let end_time = performance.now();
-    ns.tprint(end_time - start_time);
 };
 
 /**
