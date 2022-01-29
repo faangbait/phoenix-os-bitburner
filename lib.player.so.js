@@ -315,7 +315,10 @@ export default function playerFactory() {
                 };
 
             })
-        }
+        },
+        queued_augmentations: {
+            value: []
+        },
     });
     return PlayerObject;
 }

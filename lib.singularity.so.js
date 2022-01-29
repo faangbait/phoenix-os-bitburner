@@ -1,6 +1,5 @@
 import { autoSolve } from "./sing.codingcontracts";
 import * as factions from "./var.logicFactions";
-import factionFactory from "./lib.factions.so";
 import { getAllServers } from "./lib.serverextras.so";
 
 /**
@@ -28,7 +27,7 @@ export const alpha = async (ns, player, servers) => {
 		await factions.selectFocusActivity(ns, player);
 
         // buy an aug, if appropriate
-        factions.buyBestAug(ns, player);
+        player = factions.buyBestAug(ns, player);
 
         /*****************
 		Get software
