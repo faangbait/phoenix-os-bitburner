@@ -315,6 +315,14 @@ export default function playerFactory() {
                 };
 
             })
+        },
+        queued_augmentations: {
+            value: []
+        },
+        rate_of_change: {
+            value: {
+                player: []
+            }
         }
     });
     return PlayerObject;

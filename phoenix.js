@@ -23,7 +23,7 @@
  
 const singularity = true; // source file 4, not in default, see "sf4" branch on github.
 
- export async function main(ns){
+export async function main(ns){
      globalThis.ns = ns;
      motd.banner(ns);
      let start_time = new Date();
