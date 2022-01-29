@@ -1,13 +1,11 @@
-export class Faction {
-    constructor(name) {
-        this.name = name;
-    }
+/**
+ * @typedef {(*.*).NS} ns
+ */
 
-    get aug_list() {
-        return ns.getAugmentationFromFaction(this.name);
-    }
+import { desired_augmentations, find_best_aug } from "./lib.augmentations.so";
+import { PriorityQueue } from "./lib.structures.so";
+import factionFactory from "./lib.factions.so";
 
-}
 
 export const joinFactions = async (ns, player, faction=null) => {
 
@@ -67,22 +65,55 @@ export const joinFactions = async (ns, player, faction=null) => {
  * @param {import("./phoenix-doc").PlayerObject} player 
  */
 export const selectFocusActivity = async (ns, player) => {
-    if (player.faction.membership.length == 0) {
-        return player;
+    let pqueue = new PriorityQueue();
+
+    const priority_stat = "hacking_mult";
+
+
+    if (player.work.isWorking) {
+        let current = player.work.current.factionName;
+        let faction = factionFactory(current);
+        if (faction.unowned_augs.size == 0 || desired_augmentations(player, priority_stat).length == 0) { // neuroflux is always included
+            ns.stopAction();
+            ns.tprint("Stopping work for ", faction.name, "as we need none of their augments");
+        }
+    } else {
+        for (let faction_name of player.faction.membership) {
+            let faction = factionFactory(faction_name);
+            if (faction.unowned_augs.size > 0) {
+                for (let aug of faction.unowned_augs.keys()) {
+                    ns.tprint(faction.name,", ",faction.unowned_augs.size, ", ", desired_augmentations(player, priority_stat));
+                    if (desired_augmentations(player, priority_stat).has(aug)) {
+                        pqueue.add(faction, faction.unowned_augs.size);
+                    }
+                }
+            }
+        }
+        ns.tprint("Starting work for ", pqueue.peek());
     }
 
-    if (player.faction.membership.length == 1) {
-        ns.workForFaction(player.faction.membership[0], "Hacking Contracts", false);
+
+    let next_faction = pqueue.poll();
+
+    if (next_faction) {
+        ns.workForFaction(next_faction.name, "Hacking Contracts", false);
     }
+    return player;
+};
 
-    if (ns.getFactionRep("BitRunners") < 250000) {
-        ns.workForFaction("BitRunners", "Hacking Contracts", false);
-     }
-     if (ns.getFactionRep("NiteSec") < 112500) {
-        ns.workForFaction("NiteSec", "Hacking Contracts");
-     }
 
-     if (ns.getFactionRep("CyberSec") < 18500) {
-        ns.workForFaction("CyberSec", "Hacking Contracts", false);
-     }
+/**
+ * 
+ * @param {ns} ns 
+ * @param {import("./phoenix-doc").PlayerObject} player 
+ */
+export const buyBestAug = (ns, player) => {
+    for (let faction_name of player.faction.membership) {
+        let faction = factionFactory(faction_name);
+        let best_aug = find_best_aug(ns, player, faction);
+        if (best_aug) {
+            ns.tprint("aug buy target ", faction_name, " ", best_aug, " can buy? ", faction.can_purchase_aug(player, best_aug.name));
+        }
+        
+    }
 };

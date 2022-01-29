@@ -1,5 +1,6 @@
 import { autoSolve } from "./sing.codingcontracts";
 import * as factions from "./var.logicFactions";
+import factionFactory from "./lib.factions.so";
 import { getAllServers } from "./lib.serverextras.so";
 
 /**
@@ -18,11 +19,16 @@ import { getAllServers } from "./lib.serverextras.so";
  */
 export const alpha = async (ns, player, servers) => {
         //solve coding contracts
-		autoSolve(ns, servers.map(s => s.id));
+		autoSolve(ns, servers.map(s => s.id)); // note, this + the import is 20gb of ram alone.
 
         //join factions without any restrictions
 		await factions.joinFactions(ns, player);
-		await factions.selectFocusActivity(ns, player);
+
+        // set best activity
+		player = await factions.selectFocusActivity(ns, player);
+
+        // buy an aug, if appropriate
+        factions.buyBestAug(ns, player);
 
         /*****************
 		Get software
@@ -44,6 +50,10 @@ export const alpha = async (ns, player, servers) => {
 				ns.purchaseProgram(software);
 			} catch (e) {}
 		}
+
+
+
+
 		/*****************
 		Upgrade home
 		*****************/
