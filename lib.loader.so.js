@@ -29,8 +29,8 @@ export function firstLoad(ns) {
  * 
  * @export 
  * @param {import(".").NS} ns
- * @param {ServerObject[]} servers
- * @param {PlayerObject} player
+ * @param {import("./phoenix-doc").ServerObject[]} servers
+ * @param {import("./phoenix-doc").PlayerObject} player
  * @return 
  * 
  */
@@ -55,8 +55,8 @@ export function firstLoad(ns) {
             server.sudo();
         }
     }
-    
-    Object.assign(player, new_player);
+
+    player.rate_of_change.player.push(new_player);
 
     return {
         servers,

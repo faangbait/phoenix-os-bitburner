@@ -236,6 +236,10 @@ export interface PlayerObject {
             level: number;
         }
     };
+    queued_augmentations: Augmentation[];
+    rate_of_change: {
+        player: PlayerObject[];
+    }
 
 };
 
