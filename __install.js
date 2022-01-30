@@ -19,6 +19,7 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.motd.js","etc.motd.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.purchase_server.js","etc.purchase_server.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.x11.js","etc.x11.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.database.so.js","lib.database.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.gamestates.so.js","lib.gamestates.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.loader.so.js","lib.loader.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.player.so.js","lib.player.so.js");
