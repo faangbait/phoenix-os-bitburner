@@ -27,16 +27,18 @@ export async function main(ns) {
     ns.tprint("");
     ns.tprint("");
     ns.tprint("");
-    ns.tprint("Patch complete. You should now refresh-> kill all scripts and restart the software with 'run phoenix.js'.");
-    ns.tprint("");
-    ns.tprint("");
-    ns.tprint("");
+
 
     if (ns.args[0]) {
-        ns.kill("sbin.keepalive.js");
-        ns.kill("phoenix.js");
-        ns.spawn("phoenix.js");
+        ns.tprint("Patch complete. Spawning phoenix in 10s.");
+        ns.kill("sbin.keepalive.js", "home");
+        ns.kill("phoenix.js", "home");
+        ns.spawn("phoenix.js", "home");
     } else {
+        ns.tprint("Patch complete. You should now refresh-> kill all scripts and restart the software with 'run phoenix.js'.");
         ns.killall();
     }
+    ns.tprint("");
+    ns.tprint("");
+    ns.tprint("");
 }
