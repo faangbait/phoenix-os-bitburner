@@ -10,7 +10,7 @@ import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.uti
 import updateData, { firstLoad, snapshotServer, snapshotPlayer } from "./lib.loader.so";
 
 /***************************************************************/
-
+import { alpha, omega } from "./lib.singularity.so";
  
 /***************************************************************/
 /* I strongly suggest you move these files somewhere else.     */
