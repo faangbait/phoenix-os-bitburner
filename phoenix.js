@@ -6,7 +6,7 @@
  */
 
  import * as motd from "./etc.motd";
- import updateData, { firstLoad } from "./lib.loader.so";
+ import updateData, { firstLoad, snapshotServer, snapshotPlayer } from "./lib.loader.so";
  import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.utils.so";
  import { alpha, omega } from "./lib.singularity.so";
  
@@ -40,10 +40,13 @@ export async function main(ns){
         } else {
             ns.print("Not enough RAM to start keepalive daemon on home.");
         }
-            
 
         ({servers, player} = updateData(ns, servers, player));
- 
+        await snapshotPlayer(player);
+
+        for await (const server of servers) {
+            await snapshotServer(server);
+        }
 
        var gameStage = determineGameStage(servers, player);
        var moneyStage = determineResourceAllocation(servers, player);

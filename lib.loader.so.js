@@ -1,8 +1,8 @@
 
 import { getAllServers } from "./lib.serverextras.so";
-import serverFactory from "./lib.server.so";
-import playerFactory from "./lib.player.so";
-
+import serverFactory, { ServerSnapshot } from "./lib.server.so";
+import playerFactory, { PlayerSnapshot } from "./lib.player.so";
+import { handleDB } from "./lib.database.so";
 
 /**
  * Loads initial data into the game.
@@ -105,3 +105,29 @@ export function firstLoad(ns) {
         player,
     };
 }
+
+
+// export async function snapshotServer(server) {
+//     const db = await handleDB();
+//     const snap = new ServerSnapshot(server);
+//     await db.put("servers", snap);
+// }
+
+// export async function snapshotPlayer(player) {
+//     // await handleDB().put("player", new ServerSnapshot(player));
+//     const db = await handleDB();
+//     const snap = new PlayerSnapshot(player);
+//     await db.put("player", snap);
+// }
+
+export const snapshotServer = async (server) => {
+    const db = await handleDB();
+    const snap = new ServerSnapshot(server);
+    await db.put("servers", snap);
+};
+
+export const snapshotPlayer = async (player) => {
+    const db = await handleDB();
+    const snap = new PlayerSnapshot(player);
+    await db.put("player", snap);
+};

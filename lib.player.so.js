@@ -305,7 +305,7 @@ export default function playerFactory() {
         software: {
             get: (function () {
                 return {
-                    tor: globalThis.ns.getServer(hostname).tor,
+                    tor: globalThis.ns.getPlayer().tor,
                     ssh: globalThis.ns.fileExists("BruteSSH.exe"),
                     ftp: globalThis.ns.fileExists("FTPCrack.exe"),
                     smtp: globalThis.ns.fileExists("RelaySMTP.exe"),
@@ -326,4 +326,39 @@ export default function playerFactory() {
         }
     });
     return PlayerObject;
+}
+
+
+export class PlayerSnapshot {
+    constructor(PlayerObject) {
+        for (let prop of [
+            "id",
+            "hp",
+            "level",
+            "money",
+            "intelligence",
+            "location",
+            "city",
+            "className",
+            "company",
+            "bladeburner",
+            "createProg",
+            "crime",
+            "work",
+            "charisma",
+            "agility",
+            "dexterity",
+            "defense",
+            "strength",
+            "faction",
+            "hacking",
+            "hnet",
+            "market",
+            "playtime",
+            "ports",
+            "software"
+        ]) {
+            this[prop] = PlayerObject[prop];
+        }
+    }
 }

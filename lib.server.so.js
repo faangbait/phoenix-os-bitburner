@@ -276,3 +276,33 @@ export default function serverFactory(hostname) {
     return ServerObject;
 }
 
+export class ServerSnapshot {
+    constructor(ServerObject) {
+        for (let prop of [
+            "id",
+            "hostname",
+            "admin",
+            "level",
+            "purchased",
+            "connected",
+            "backdoored",
+            "cores",
+            "ram",
+            "power",
+            "organization",
+            "ports",
+            "security",
+            "money",
+            "pids",
+            "targeted_by",
+            "hackTime",
+            "weakenTime",
+            "growTime",
+            "hackMaxThreads",
+            "growMaxThreads",
+            "weakMaxThreads"
+        ]) {
+            this[prop] = ServerObject[prop];
+        }
+    }
+}
