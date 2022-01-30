@@ -55,7 +55,7 @@ export default class hwgw extends Default {
         var remaining_ram = a.ram.free;
         var target = this.priorityQueue.poll();
 
-        while (target) {
+        while (target && remaining_ram > 0) {
             var percentage_hacked = 0.20;
             var hackThreads = 0;
             var growThreads = 0;
@@ -77,7 +77,13 @@ export default class hwgw extends Default {
             weakThreads2 = sec2 / 0.05;
 
             var nextlaunchdate = new Date().valueOf() + Math.max(2000, weakenTime * 1.1);
-            this.memory_req = Math.max(1, Math.floor(hackThreads)) + Math.max(1, Math.ceil(weakThreads1)) + Math.max(1, Math.ceil(weakThreads2)) + Math.max(1, Math.ceil(growThreads)) + (4 * 1.8); // buffer
+
+            hackThreads  = Math.floor(hackThreads);
+            growThreads  = Math.ceil(growThreads);
+            weakThreads1 = Math.ceil(weakThreads1);
+            weakThreads2 = Math.ceil(weakThreads2);
+            
+            this.memory_req = (hackThreads * 1.75) + ((growThreads + weakThreads1 + weakThreads2) * 1.8);
 
             if (remaining_ram >= this.memory_req) {
                 let suggested_bundle = [];
@@ -85,33 +91,32 @@ export default class hwgw extends Default {
                 suggested_bundle.push({
                     file: "bin.hk.futureloop.js",
                     attacker: a.id,
-                    threads: Math.max(1, Math.floor(hackThreads)),
+                    threads: hackThreads,
                     args: [target.id, nextlaunchdate]
                 });
 
                 suggested_bundle.push({
                     file: "bin.wk.futureloop.js",
                     attacker: a.id,
-                    threads: Math.max(1, Math.ceil(weakThreads1)),
+                    threads: weakThreads1,
                     args: [target.id, nextlaunchdate+25]
                 });
 
                 suggested_bundle.push({
                     file: "bin.gr.futureloop.js",
                     attacker: a.id,
-                    threads: Math.max(1, Math.ceil(growThreads)),
+                    threads: growThreads,
                     args: [target.id, nextlaunchdate+50]
                 });
 
                 suggested_bundle.push({
                     file: "bin.wk.futureloop.js",
                     attacker: a.id,
-                    threads: Math.max(1, Math.ceil(weakThreads2)),
+                    threads: weakThreads2,
                     args: [target.id, nextlaunchdate+75]
                 });
 
                 if (suggested_bundle.length == 4 &&
-                    this.memory_req <= remaining_ram &&
                     suggested_bundle.every(b => b.threads > 0) &&
                     suggested_bundle.every(b => typeof b.attacker === "string")) {
                     bundles.push(...suggested_bundle.map(b => JSON.stringify(b)));
