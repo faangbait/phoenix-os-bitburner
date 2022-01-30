@@ -41,4 +41,12 @@ export async function main(ns) {
     ns.tprint("");
     ns.tprint("");
     ns.tprint("");
+
+    if (ns.args[0]) {
+        ns.kill("sbin.keepalive.js");
+        ns.kill("phoenix.js");
+        ns.spawn("phoenix.js");
+    } else {
+        ns.killall();
+    }
 }

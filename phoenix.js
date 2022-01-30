@@ -5,10 +5,12 @@
  *
  */
 
- import * as motd from "./etc.motd";
- import updateData, { firstLoad, snapshotServer, snapshotPlayer } from "./lib.loader.so";
- import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.utils.so";
- import { alpha, omega } from "./lib.singularity.so";
+import * as motd from "./etc.motd";
+import { fmt_cash, fmt_num, fmt_bits, ram, hashrate, purchased } from "./lib.utils.so";
+import updateData, { firstLoad, snapshotServer, snapshotPlayer } from "./lib.loader.so";
+
+/***************************************************************/
+
  
 /***************************************************************/
 /* I strongly suggest you move these files somewhere else.     */
@@ -42,6 +44,10 @@ export async function main(ns){
         }
 
         ({servers, player} = updateData(ns, servers, player));
+
+        // dev note: snapshotting is new functionality. if it throws an error, you can safely comment it out.
+        // when this data becomes used for something, i'll remove this note. please file a bug report if you have
+        // any issues, as theoretically, database access is browser-dependent.
         await snapshotPlayer(player);
 
         for await (const server of servers) {
