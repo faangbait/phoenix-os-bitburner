@@ -45,6 +45,10 @@ export async function main(ns){
         }
 
         ({servers, player} = updateData(ns, servers, player));
+
+        // dev note: snapshotting is new functionality. if it throws an error, you can safely comment it out.
+        // when this data becomes used for something, i'll remove this note. please file a bug report if you have
+        // any issues, as theoretically, database access is browser-dependent.
         await snapshotPlayer(player);
 
         for await (const server of servers) {
