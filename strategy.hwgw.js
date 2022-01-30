@@ -14,17 +14,17 @@ export default class hwgw extends Default {
         this.files = [
             {
                 path: "bin.hk.futureloop.js",
-                ram: 1.7,
+                ram: 1.75,
                 ratio: 0
             },
             {
                 path: "bin.gr.futureloop.js",
-                ram: 1.75,
+                ram: 1.8,
                 ratio: 0
             },
             {
                 path: "bin.wk.futureloop.js",
-                ram: 1.75,
+                ram: 1.8,
                 ratio: 0
             }
         ];
@@ -131,73 +131,6 @@ export default class hwgw extends Default {
         }
         return bundles;
     }
-
-
-
-
-    // prepare_package(a, targets) {
-    //     var bundles = [];
-    //     var ram_used_this_bundle = 0;
-    //     if (bundles.length == 0) { // nobody needed prep
-    //         targets.forEach(target => {
-
-    //             var percentage_hacked = 0.20;
-    //             var hackThreads;
-    //             var growThreads;
-    //             var weakThreads1;
-    //             var weakThreads2;
-    //             var sec1;
-    //             var sec2;
-
-    //             var hackTime = target.hackTime;
-    //             var growTime = hackTime * 3.2;
-    //             var weakenTime = hackTime * 4;
-
-    //             hackThreads = globalThis.ns.hackAnalyzeThreads(target.id, (target.money.max * percentage_hacked));
-    //             growThreads = globalThis.ns.growthAnalyze(target.id, 1 / percentage_hacked);
-        
-    //             sec1 = hackThreads * 0.002;
-    //             sec2 = growThreads * 0.004;
-    //             weakThreads1 = sec1 / 0.05;
-    //             weakThreads2 = sec2 / 0.05;
-
-    //             let nextlaunchdate = new Date().valueOf() + Math.max(2000, weakenTime * 1.1);
-
-    //             if (a.ram.free > ram_used_this_bundle + ((hackThreads + weakThreads1 + weakThreads2 + growThreads) * 1.8)) {
-    //                 bundles.push(JSON.stringify({
-    //                     file: "bin.hk.futureloop.js",
-    //                     attacker: a.id,
-    //                     threads: Math.max(1, Math.floor(hackThreads)),
-    //                     args: [target.id, nextlaunchdate]
-    //                 }));
-    //                 bundles.push(JSON.stringify({
-    //                     file: "bin.wk.futureloop.js",
-    //                     attacker: a.id,
-    //                     threads: Math.max(1, Math.ceil(weakThreads1)),
-    //                     args: [target.id, nextlaunchdate+25]
-    //                 }));
-    //                 bundles.push(JSON.stringify({
-    //                     file: "bin.gr.futureloop.js",
-    //                     attacker: a.id,
-    //                     threads: Math.max(1, Math.ceil(growThreads)),
-    //                     args: [target.id, nextlaunchdate+50]
-    //                 }));
-    //                 bundles.push(JSON.stringify({
-    //                     file: "bin.wk.futureloop.js",
-    //                     attacker: a.id,
-    //                     threads: Math.max(1, Math.ceil(weakThreads2)),
-    //                     args: [target.id, nextlaunchdate+75]
-    //                 }));
-                  
-    //             }
-    //             ram_used_this_bundle += (hackThreads + weakThreads1 + weakThreads2 + growThreads) * 1.75;
-
-    //         });
-
-   
-    //     }
-    //     return bundles;
-    // }
 
 
     iterate(servers, attackers, bootstrapped, targets, filtered, executions, pids) {
