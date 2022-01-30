@@ -1,8 +1,8 @@
 
 import { getAllServers } from "./lib.serverextras.so";
-import serverFactory from "./lib.server.so";
-import playerFactory from "./lib.player.so";
-
+import serverFactory, { ServerSnapshot } from "./lib.server.so";
+import playerFactory, { PlayerSnapshot } from "./lib.player.so";
+import { handleDB } from "./lib.database.so";
 
 /**
  * Loads initial data into the game.
@@ -70,3 +70,49 @@ export function firstLoad(ns) {
         player,
     };
 }
+
+
+/**
+ * Handles merging, deduplication, and creation of objects on every update.
+ * 
+ * @export 
+ * @param {import(".").NS} ns
+ * @param {ServerObject[]} servers
+ * @param {PlayerObject} player
+ * @return 
+ * 
+ */
+ export function updateNoSudo(ns, servers, player) {
+
+    let serverList = getAllServers(ns);
+    let new_servers = serverList.map(s => serverFactory(s));
+    let new_player = playerFactory();
+
+    let serv_ids = [];
+    servers.forEach(s => serv_ids.push(s.id));
+
+    for (const server of new_servers) {
+        if (!serv_ids.includes(server.id)) {
+            servers.push(server);
+        }
+    }
+    
+    Object.assign(player, new_player);
+
+    return {
+        servers,
+        player,
+    };
+}
+
+export const snapshotServer = async (server) => {
+    const db = await handleDB();
+    const snap = new ServerSnapshot(server);
+    await db.put("servers", snap);
+};
+
+export const snapshotPlayer = async (player) => {
+    const db = await handleDB();
+    const snap = new PlayerSnapshot(player);
+    await db.put("player", snap);
+};
