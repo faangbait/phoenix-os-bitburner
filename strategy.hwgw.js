@@ -43,7 +43,7 @@ export default class hwgw extends Default {
         let priorities = new Map();
 
         priorities.set(10, (t => t.hackTime < 60));
-        priorities.set(12, (t => (t.id != "n00dles")));
+        priorities.set(16, (t => (t.id == "n00dles")));
 
         return priorities;
         
