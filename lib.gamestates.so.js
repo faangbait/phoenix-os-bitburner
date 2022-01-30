@@ -347,9 +347,9 @@ export class gsMidGame extends DefaultGameStage {
                 return (s.admin) &&
                     (!s.purchased) &&
                     (s.money.max > 0) &&
-                    (s.money.max > s.money.available) &&
+                    ((s.money.max > s.money.available) ||
+                    (s.security.level > s.security.min)) &&
                     (s.level < player.level) &&
-                    (s.security.level > s.security.min) &&
                     (s.targeted_by.length == 0);
             });
         };
@@ -446,9 +446,9 @@ export class gsRepair extends DefaultGameStage {
                 return (s.admin) &&
                     (!s.purchased) &&
                     (s.money.max > 0) &&
-                    (s.money.max > s.money.available) &&
+                    ((s.money.max > s.money.available) ||
+                    (s.security.level > s.security.min)) &&
                     (s.level < player.level) &&
-                    (s.security.level > s.security.min) &&
                     (s.targeted_by.length == 0);
             });
         };
