@@ -45,9 +45,7 @@ export const selectFocusActivity = async (ns, player) => {
             ns.stopAction();
             ns.tprint("Stopping work for ", faction.name, " as we need none of their augments");
             selectFocusActivity(ns, player);
-        }
-
-        if (faction.wanted_augs.sort((a,b) => b.rep - a.rep)[0] < faction.rep) {
+        } else if (faction.wanted_augs.sort((a,b) => b.rep - a.rep)[0] < faction.rep) {
             ns.stopAction();
             ns.tprint("Stopping work for ", faction.name, " as we have enough rep for all the augments we want");
             selectFocusActivity(ns, player);
@@ -85,6 +83,35 @@ export const selectFocusActivity = async (ns, player) => {
  * @param {import("./phoenix-doc").PlayerObject} player 
  */
 export const buyBestAug = (ns, player) => {
+    /* too much logic in this function */
+    /* need to pull it out to state */
+    // this function will continue to purchase the best aug, but it won't make decisions about
+    // when is the right time to purchase one, or what the best aug is.
+
+    const pq = prioritize_augmentations(ns, player); // priority queue defines augmentation priority.
+    let next_priority = pq.poll();
+    // let stat_priority = get_stat_priorities(ns, player)
+    const stat_priority = undefined;
+    while (next_priority) {
+        if (next_priority.stats.keys().includes(stat_priority)) { // okay, next up is an aug we want
+            for (let faction_name of player.faction.membership) {
+                let faction = factionFactory(faction_name);
+                if (faction.aug_list.includes(next_priority.name)) {
+                    if (faction.can_purchase_aug(player, next_priority.name)) {
+                        faction.purchase_aug(next_priority.name);
+                    }
+                }
+            }
+
+        }
+    }
+    
+
+
+
+
+
+
     // const pq = prioritize_augmentations(ns, player);
     // let next_priority = pq.poll();
     // // todo: consider whether it prioritizes a stat we want; 
@@ -93,11 +120,11 @@ export const buyBestAug = (ns, player) => {
     // let can_buy = new Map();
 
     // while (next_priority && !next_faction) {
-    //     // for (let faction_name of player.faction.membership) { 
-    //     // let faction = factionFactory(faction_name);
-    //     // now: only consider the faction we're currently working for
-    //     let faction = factionFactory(player.work.current.factionName);
-    //     faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name));
+        // for (let faction_name of player.faction.membership) { 
+        // let faction = factionFactory(faction_name);
+        // now: only consider the faction we're currently working for
+        // let faction = factionFactory(player.work.current.factionName);
+        // faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name));
 
     //     if (faction.wanted_augs.includes(next_priority)) {
     //         let considering = next_priority;
@@ -126,5 +153,6 @@ export const buyBestAug = (ns, player) => {
     //     next_buy.faction.purchase_aug(next_buy.name);
     //     player.queued_augmentations.push(next_buy);
     // }
+
     return player;
 };

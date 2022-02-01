@@ -110,10 +110,12 @@ export const snapshotServer = async (server) => {
     const db = await handleDB();
     const snap = new ServerSnapshot(server);
     await db.put("servers", snap);
+    return snap;
 };
 
 export const snapshotPlayer = async (player) => {
     const db = await handleDB();
     const snap = new PlayerSnapshot(player);
     await db.put("player", snap);
+    return snap;
 };

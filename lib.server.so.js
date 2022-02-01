@@ -14,7 +14,7 @@ import {
  *
  * @export
  * @param {string} hostname
- * @return {ServerObject} 
+ * @return {ServerObject}
  */
 export default function serverFactory(hostname) {
 
@@ -142,11 +142,11 @@ export default function serverFactory(hostname) {
                                 continue;
                             }
                             list.push(child);
-                            
+
                             scan(ns, server, child, list);
                         }
                     }
-                    
+
                     function list_servers(ns) {
                         const list = [];
                         scan(ns, '', 'home', list);
@@ -181,12 +181,12 @@ export default function serverFactory(hostname) {
                 let skillFactor = diffFactor * difficultyMult + baseDiff;
                 // tslint:disable-next-line
                 skillFactor /= player.hacking + baseSkill;
-              
+
                 const hackTimeMultiplier = 5;
                 const hackingTime =
                   (hackTimeMultiplier * skillFactor) /
                   (player.hacking_speed_mult * ( 1 + (Math.pow(player.intelligence, 0.8)) / 600 ));
-              
+
                 return hackingTime*1000;
                 } else {
                     return Number.POSITIVE_INFINITY;
@@ -210,7 +210,7 @@ export default function serverFactory(hostname) {
                 if (percentMoneyHacked > 1) {
                     percentMoneyHacked = 1;
                 }
-              
+
                 return this.money.available / Math.max(Math.floor(this.money.available * percentMoneyHacked),1);
             })
         },
@@ -221,9 +221,9 @@ export default function serverFactory(hostname) {
                 if (ajdGrowthRate > 1.0035) {
                   ajdGrowthRate = 1.0035;
                 }
-              
+
                 const serverGrowthPercentage = this.money.growth / 100;
-              
+
                 const coreBonus = 1 + (this.cores - 1) / 16;
                 const cycles =
                   Math.log(this.money.max / (this.money.available + 1)) /
@@ -231,9 +231,9 @@ export default function serverFactory(hostname) {
                     globalThis.ns.getPlayer().hacking_grow_mult *
                     serverGrowthPercentage *
                     coreBonus);
-              
+
                 return cycles;
-              
+
             })
         },
         weakMaxThreads: {
@@ -251,6 +251,16 @@ export default function serverFactory(hostname) {
                 return this.hackTime * 3.2;
             })
         },
+        isTarget: {
+            get: (function() {
+                return (!this.purchased && !this.isHome && this.money.max > 0 && this.ports.open >= this.ports.required && this.admin && this.level <= globalThis.ns.getPlayer().hacking);
+            })
+        },
+        isAttacker: {
+            get: (function() {
+                return (this.purchased || this.isHome || (this.ram.max > 0 && this.admin));
+            })
+        }
     });
 
     ServerObject.create = function (hostname) {
@@ -272,6 +282,13 @@ export default function serverFactory(hostname) {
         return threads;
     };
 
+    // ServerObject.loadBinaries = async function () {
+    // };
+
+    ServerObject.loadBinaries = async function () {
+        let files = ns.ls("home", "bin.");
+        await ns.scp(files, "home", this.hostname);
+    };
 
     return ServerObject;
 }

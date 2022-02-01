@@ -161,7 +161,6 @@ function growth ( known_y, known_x, new_x, use_const ) {
         var beta = avg_xy / avg_xx;
         var alpha = 0;
     }
-    // console.log("alpha = " + alpha + ", beta = " +  beta);
 
     // compute and return result array:
     var new_y = [];
@@ -171,14 +170,6 @@ function growth ( known_y, known_x, new_x, use_const ) {
     return new_y;
 }
 
-// var known_y = [33100, 47300, 69000, 102000, 150000, 220000];
-// var known_x = [11, 12, 13, 14, 15, 16];
-// var new_x = [11, 12, 13, 14, 15, 16, 17, 18, 19];
-// var new_y = growth( known_y, known_x, new_x );
- 
-// for ( var i = 0; i < new_x.length; i++ ) {
-//     console.log( new_x[i] + ": " + new_y[i] );
-// }
 
 export function range(size, startAt = 0) {
     return [...Array(size).keys()].map(i => i + startAt);

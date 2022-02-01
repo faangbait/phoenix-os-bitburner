@@ -1,3 +1,5 @@
+import { PriorityQueue } from "./lib.structures.so";
+
 export const fmt_cash = (money) => {
     return globalThis.ns.nFormat(money, "$0.0a");
 };
@@ -72,3 +74,48 @@ export const IsPlayerBroke = (player, servers) => {
     return player.ports < 5 || player.playtime.sinceAug < 300000 || player.hacking.level > 2500 && !player.factions.includes("Daedalus");
 };
 
+
+/**
+ * Given n variables of various weights, create a priority queue.
+ * This is the final factory function, taking an a map, e.g.
+ * 
+ * let weights = new Map();
+ * weights.set("brush_teeth", 750);
+ * weights.set("put_on_pajamas", 23);
+ * weights.set("turn_off_lights", 880)
+ * 
+ * pq = queueFactory(weights)
+ * pq.poll() -> put_on_pajamas
+ * 
+ * By default, we prioritize the lowest value from the list. poll_high reverses.
+ * 
+ * @export
+ * @param {Map<K,V>} weights
+ * @return {PriorityQueue} 
+ */
+
+ export function queueFactory(weights, poll_high=false) {
+    const pq = new PriorityQueue();
+
+    if (poll_high) {
+        weights.forEach((v,k) => pq.add(k, v * -1));
+    } else {
+        weights.forEach((v,k) => pq.add(k, v));
+    }
+    return pq;
+}
+/**
+ *
+ *
+ * @export
+ * @param {Map<K,V>} weights
+ * @param {Map<K,V>[]} modifiers
+ * @return {Map<K,V>} 
+ */
+export function mergeModifiers(weights, modifiers) {
+    
+    for (const mod of modifiers) {
+        mod.forEach((v,k) => weights.set(k, v + weights.get(k)));
+        }
+    return weights;
+}

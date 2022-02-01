@@ -40,4 +40,8 @@ export default class CashOut extends Default {
         priorities.set(16, (t => t.money.available < 20000));
         return priorities;
     }
+
+    disqualify_target(t) {
+        return (t.money.available < 25000);
+    }
 }

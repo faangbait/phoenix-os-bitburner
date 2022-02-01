@@ -19,8 +19,22 @@ export async function main(ns) {
         }
     }
 
+    await control(ns);
+
     if (ns.getServerSecurityLevel(target) - ns.getServerMinSecurityLevel(target) > 0) {
             await ns.weaken(target);
     }
 
+}
+
+
+
+async function control(ns) {
+    let cc = ns.peek(1);
+    if (cc !== "NULL PORT DATA") {
+        cc = JSON.parse(cc);
+        if (cc.request == "SIGHUP") {
+            ns.exit();
+        }
+    }
 }

@@ -1,7 +1,7 @@
 import { get_distance_to_next_augment } from "./lib.augmentations.so";
 import { getAllServers } from "./lib.serverextras.so";
 import { autoSolve } from "./sing.codingcontracts";
-import * as factions from "./var.logicFactions";
+import * as factions from "./logic.factions";
 import { loop_time } from "./var.constants";
 
 /**
@@ -18,6 +18,7 @@ import { loop_time } from "./var.constants";
  * @param {PlayerObject} player 
  * @param {ServerObject[]} servers 
  */
+
 export const alpha = async (ns, player, servers) => {
 	// let start_time = performance.now();
 	//solve coding contracts
@@ -30,7 +31,7 @@ export const alpha = async (ns, player, servers) => {
 	await factions.selectFocusActivity(ns, player);
 
 	// buy an aug, if appropriate
-	player = factions.buyBestAug(ns, player);
+	// player = factions.buyBestAug(ns, player);
 
 	/*****************
 	Get software
@@ -82,8 +83,6 @@ export const alpha = async (ns, player, servers) => {
 		}
 	} catch (e) {}
 
-	
-
 	return { player, servers };
 };
 
@@ -98,9 +97,13 @@ export const omega = async (ns, player, servers) => {
 
 	let distance = get_distance_to_next_augment(ns, player, servers); // exponential rate of change per tick
 
-
-	
-
-
     return { player, servers };  
+};
+
+export const gsModifiers = async (ns, player, servers) => {
+    return new Map();
+};
+
+export const msModifiers = async (ns, player, servers) => {
+    return new Map();
 };

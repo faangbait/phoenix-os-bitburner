@@ -155,6 +155,7 @@ export default class Default {
                         ratio
                     } of this.files) {
                     let threads = a.threadCount(this.memory_req / ratio);
+                    threads = Math.min(threads, target.hackMaxThreads); // don't overhack
                     threads = Math.max(1, threads); // minimum 1 thread
                     threads = Math.floor(threads); // round to floor
                     suggested_bundle.push({
@@ -168,7 +169,7 @@ export default class Default {
                 // ns.tprint("Suggested bundle: ", suggested_bundle);
                 if (suggested_bundle.length == this.files.length &&
                     bundle_ram <= remaining_ram &&
-                    suggested_bundle.every(b => b.threads > 0) &&
+                    suggested_bundle.every(b => b.threads >=1) &&
                     suggested_bundle.every(b => typeof b.attacker === "string")) {
                     bundles.push(...suggested_bundle.map(b => JSON.stringify(b)));
                     remaining_ram -= bundle_ram;
@@ -176,12 +177,12 @@ export default class Default {
                     ns.tprint("Couldn't push bundle: ",
                     (suggested_bundle.length == this.files.length)," ",
                     (bundle_ram <= remaining_ram), " ",
-                    suggested_bundle.every(b => b.threads > 0)," ",
+                    suggested_bundle.every(b => b.threads >=1)," ",
                     suggested_bundle.every(b => typeof b.attacker === "string")," ",
                     );
                     remaining_ram = 0;
                 }
-
+                break;
             }
             target = this.priorityQueue.poll();
         }
@@ -201,9 +202,10 @@ export default class Default {
      */
     deploy_package(e) {
         let pids = [];
-            
+            // ns.tprint(e);
         for (let attack of e) {
             let attack_array = JSON.parse(attack);
+            ns.tprint(attack_array);
             pids.push(globalThis.ns.exec(attack_array.file, attack_array.attacker, attack_array.threads, ...attack_array.args));
         }
         return pids;
@@ -243,7 +245,7 @@ export default class Default {
                 rows.push([
                     server_copy.filter(s => s.ram.max < this.memory_req).map(s => s.id)[i] || "",
                     server_copy.filter(s => s.ram.free >= this.memory_req ).map(s => s.id)[i] || "",
-                    server_copy.filter(s => s.ram.free < this.memory_req).map(s => s.id)[i] || "",
+                    server_copy.filter(s => s.ram.free < this.memory_req).map(s => s.id)[i] || ""
                 ]);
             }
             pt.create(headers, rows);
