@@ -17,7 +17,7 @@
      let hackTime = ns.getHackTime(target);                          // 1000         // it works
      let runtime =  hackTime * hackTime_modifier;                    // 3200         // 
      let looptime = Math.max(hackTime * 4.2, 100);                   // 4200         // 
-     ns.tprint("Weak finished against", target, " at ", new Date().getSeconds(), ".",new Date().getMilliseconds());
+     ns.tprint("Weak finished against ", target, " at ", new Date().getSeconds(), ".",new Date().getMilliseconds());
 
      
      while (true) {                                                  // 852900       // 
