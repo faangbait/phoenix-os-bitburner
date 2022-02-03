@@ -19,12 +19,16 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.motd.js","etc.motd.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.purchase_server.js","etc.purchase_server.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/etc.x11.js","etc.x11.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.augmentations.so.js","lib.augmentations.so.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.database.so.js","lib.database.so.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.factions.so.js","lib.factions.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.gamestates.so.js","lib.gamestates.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.loader.so.js","lib.loader.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.player.so.js","lib.player.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.server.so.js","lib.server.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.serverextras.so.js","lib.serverextras.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.structures.so.js","lib.structures.so.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.singularity.so.js","lib.singularity.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/lib.utils.so.js","lib.utils.so.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/phoenix.js","phoenix.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.hnet.js","sbin.hnet.js");
@@ -32,6 +36,7 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.market.js","sbin.market.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.scp.js","sbin.scp.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.sudo.js","sbin.sudo.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/sbin.codingcontracts.js","sbin.codingcontracts.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/src.prettytable.js","src.prettytable.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.base.js","strategy.base.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/strategy.efficiency.js","strategy.efficiency.js");
@@ -43,7 +48,9 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.fixcommonbugs.js","usr.fixcommonbugs.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.list.js","usr.list.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.route.js","usr.route.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.sf4route.js","usr.sf4route.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.constants.js","var.constants.js");
+    await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicFactions.js","var.logicFactions.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicHacking.js","var.logicHacking.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/var.logicMoney.js","var.logicMoney.js");
     await ns.wget("https://raw.githubusercontent.com/trhr/phoenix-os-bitburner/main/usr.aliases.txt","usr.aliases.txt");
