@@ -67,7 +67,7 @@ export const selectFocusActivity = async (ns, player) => {
                 faction.wanted_augs = desired_augmentations().filter(aug => aug.factions_offering.includes(faction.name) && aug.rep > faction.rep);
                 if (faction.wanted_augs.includes(next_priority)) {
                     next_faction = faction;
-                    ns.tprint("Starting work for ", next_faction.name, " in pursuit of ", next_priority);
+                    ns.tprint("Starting work for ", next_faction.name, " in pursuit of ", next_priority.name);
                     break;
                 }
             }
