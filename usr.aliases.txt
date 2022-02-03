@@ -1,5 +1,5 @@
-alias route="run usr/route.js"
-alias list="run usr/list.js"
+alias route="run usr.route.js"
+alias list="run usr.list.js"
 alias go="run phoenix.js --tail"
 alias keepalive="run sbin.keepalive.js"
-alias contracts="run usr/contracts.js"
+alias contracts="run usr.contracts.js"
