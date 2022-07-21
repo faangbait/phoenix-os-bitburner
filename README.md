@@ -1,3 +1,3 @@
 # phoenix-os-bitburner
 
-alias go="/runtimes/launcher.js"
+`alias go="/runtimes/launcher.js"`
